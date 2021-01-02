@@ -1,6 +1,5 @@
 package io.zingoworks.demospringbook;
 
-import io.zingoworks.demospringbook.user.dao.NUserDao;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,7 @@ import java.time.LocalTime;
 public class DemoSpringbookApplication {
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
-		UserDao dao = new NUserDao();
+		UserDao dao = new UserDao();
 		
 		User user = new User();
 		user.setId(String.valueOf(LocalTime.now()).substring(0, 10));

@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Slf4j
+@Deprecated
 public class NUserDao extends UserDao {
 	
 	public Connection getConnection() throws ClassNotFoundException, SQLException {
