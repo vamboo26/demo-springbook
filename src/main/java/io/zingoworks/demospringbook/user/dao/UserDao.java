@@ -11,8 +11,8 @@ public class UserDao {
 	
 	private ConnectionMaker connectionMaker;
 	
-	public UserDao() {
-		this.connectionMaker = new DConnectionMaker(); //todo cons. 구체적인 벤더
+	public UserDao(ConnectionMaker connectionMaker) {
+		this.connectionMaker = connectionMaker;
 	}
 	
 	public void add(User user) throws ClassNotFoundException, SQLException {

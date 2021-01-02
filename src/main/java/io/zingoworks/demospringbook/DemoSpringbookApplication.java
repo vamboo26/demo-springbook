@@ -1,5 +1,7 @@
 package io.zingoworks.demospringbook;
 
+import io.zingoworks.demospringbook.user.dao.ConnectionMaker;
+import io.zingoworks.demospringbook.user.dao.DConnectionMaker;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +14,8 @@ import java.time.LocalTime;
 public class DemoSpringbookApplication {
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
-		UserDao dao = new UserDao();
+		ConnectionMaker connectionMaker = new DConnectionMaker(); // 다형성
+		UserDao dao = new UserDao(connectionMaker); // 관계설정의 책임을 가져옴
 		
 		User user = new User();
 		user.setId(String.valueOf(LocalTime.now()).substring(0, 10));
