@@ -6,17 +6,21 @@ import io.zingoworks.demospringbook.message.dao.MessageDao;
 public class DaoFactory {
 	
 	public UserDao userDao() {
-		ConnectionMaker connectionMaker = new DConnectionMaker();
+		ConnectionMaker connectionMaker = connectionMaker();
 		return new UserDao(connectionMaker);
 	}
 	
 	public AccountDao accountDao() {
-		ConnectionMaker connectionMaker = new DConnectionMaker();
+		ConnectionMaker connectionMaker = connectionMaker();
 		return new AccountDao(connectionMaker);
 	}
 	
 	public MessageDao messageDao() {
-		ConnectionMaker connectionMaker = new DConnectionMaker();
+		ConnectionMaker connectionMaker = connectionMaker();
 		return new MessageDao(connectionMaker);
+	}
+	
+	public ConnectionMaker connectionMaker() {
+		return new DConnectionMaker();
 	}
 }
