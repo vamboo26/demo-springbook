@@ -7,10 +7,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Slf4j
-@Deprecated
-public class DUserDao extends UserDao {
+public class DConnectionMaker implements ConnectionMaker {
 	
-	public Connection getConnection() throws ClassNotFoundException, SQLException {
+	@Override
+	public Connection makeNewConnection() throws ClassNotFoundException, SQLException {
 		log.debug("DUserDao vendor");
 		
 		Class.forName("com.mysql.cj.jdbc.Driver");
