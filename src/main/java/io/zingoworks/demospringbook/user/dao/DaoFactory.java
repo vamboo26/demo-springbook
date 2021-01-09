@@ -1,25 +1,18 @@
 package io.zingoworks.demospringbook.user.dao;
 
-import io.zingoworks.demospringbook.account.dao.AccountDao;
-import io.zingoworks.demospringbook.message.dao.MessageDao;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class DaoFactory {
 	
+	@Bean
 	public UserDao userDao() {
 		ConnectionMaker connectionMaker = connectionMaker();
 		return new UserDao(connectionMaker);
 	}
 	
-	public AccountDao accountDao() {
-		ConnectionMaker connectionMaker = connectionMaker();
-		return new AccountDao(connectionMaker);
-	}
-	
-	public MessageDao messageDao() {
-		ConnectionMaker connectionMaker = connectionMaker();
-		return new MessageDao(connectionMaker);
-	}
-	
+	@Bean
 	public ConnectionMaker connectionMaker() {
 		return new DConnectionMaker();
 	}
