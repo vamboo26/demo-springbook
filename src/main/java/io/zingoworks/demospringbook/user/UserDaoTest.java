@@ -17,6 +17,11 @@ public class UserDaoTest {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(DaoFactory.class);
 		
 		UserDao dao = applicationContext.getBean("userDao", UserDao.class);
+		UserDao dao2 = applicationContext.getBean("userDao", UserDao.class);
+		UserDao dao3 = applicationContext.getBean("userDao", UserDao.class);
+		
+		System.out.println("dao2 = " + dao2);
+		System.out.println("dao3 = " + dao3);
 		
 		User user = new User();
 		user.setId(String.valueOf(LocalTime.now()).substring(0, 10));
