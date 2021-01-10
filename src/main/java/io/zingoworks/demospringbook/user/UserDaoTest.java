@@ -1,6 +1,7 @@
 package io.zingoworks.demospringbook.user;
 
-import io.zingoworks.demospringbook.user.dao.DaoFactory;
+import io.zingoworks.demospringbook.user.dao.CountingConnectionMaker;
+import io.zingoworks.demospringbook.user.dao.CountingDaoFactory;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import java.time.LocalTime;
 public class UserDaoTest {
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
-		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(DaoFactory.class);
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CountingDaoFactory.class);
 		
 		UserDao dao = applicationContext.getBean("userDao", UserDao.class);
 		UserDao dao2 = applicationContext.getBean("userDao", UserDao.class);
@@ -36,5 +37,14 @@ public class UserDaoTest {
 		log.debug("이름:{}", user2.getName());
 		log.debug("암호:{}", user2.getPassword());
 		log.debug("{} 조회 성공", user2.getId());
+		
+		dao.get(user.getId());
+		dao.get(user.getId());
+		dao.get(user.getId());
+		dao.get(user.getId());
+		dao.get(user.getId());
+		
+		CountingConnectionMaker ccm = applicationContext.getBean("connectionMaker", CountingConnectionMaker.class);
+		System.out.println("ccm.getCounter() = " + ccm.getCounter());
 	}
 }

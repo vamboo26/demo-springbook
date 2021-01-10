@@ -1,7 +1,6 @@
 package io.zingoworks.demospringbook.user.dao;
 
 import io.zingoworks.demospringbook.user.domain.User;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,8 +17,8 @@ public class UserDao {
 	
 	public UserDao() {
 		// DaoFactory를 통한 의존관계 검색
-		DaoFactory daoFactory = new DaoFactory();
-		this.connectionMaker = daoFactory.connectionMaker();
+		CountingDaoFactory countingDaoFactory = new CountingDaoFactory();
+		this.connectionMaker = countingDaoFactory.connectionMaker();
 	}
 	
 //	public UserDao() {
