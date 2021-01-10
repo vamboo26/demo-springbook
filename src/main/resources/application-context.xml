@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="realConnectionMaker" class="io.zingoworks.demospringbook.user.dao.DConnectionMaker"/>
+	
+	<bean id="connectionMaker" class="io.zingoworks.demospringbook.user.dao.CountingConnectionMaker">
+		<property name="realConnectionMaker" ref="realConnectionMaker"/>
+	</bean>
+	
+	<bean id="userDao" class="io.zingoworks.demospringbook.user.dao.UserDao">
+		<property name="connectionMaker" ref="connectionMaker"/>
+	</bean>
+	<!-- property로 지정하는 것 <- 자바빈 규약에서의 property는 getter/setter 있어야하므로 작성해줘야 인식 가능(?) -->
+	
+</beans>

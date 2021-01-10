@@ -3,22 +3,22 @@ package io.zingoworks.demospringbook.user.dao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class CountingDaoFactory {
 	
-	@Bean
+//	@Bean
 	public UserDao userDao() {
 		UserDao userDao = new UserDao();
 		userDao.setConnectionMaker(connectionMaker());
 		return userDao;
 	}
 	
-	@Bean
+//	@Bean
 	public ConnectionMaker connectionMaker() {
 		return new CountingConnectionMaker(realConnectionMaker());
 	}
 	
-	@Bean
+//	@Bean
 	public ConnectionMaker realConnectionMaker() {
 		return new DConnectionMaker();
 	}

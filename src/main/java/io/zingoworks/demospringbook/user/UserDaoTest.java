@@ -1,12 +1,11 @@
 package io.zingoworks.demospringbook.user;
 
 import io.zingoworks.demospringbook.user.dao.CountingConnectionMaker;
-import io.zingoworks.demospringbook.user.dao.CountingDaoFactory;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 import java.sql.SQLException;
 import java.time.LocalTime;
@@ -15,7 +14,8 @@ import java.time.LocalTime;
 public class UserDaoTest {
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
-		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CountingDaoFactory.class);
+//		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CountingDaoFactory.class);
+		ApplicationContext applicationContext = new GenericXmlApplicationContext("application-context.xml");
 		
 		UserDao dao = applicationContext.getBean("userDao", UserDao.class);
 		UserDao dao2 = applicationContext.getBean("userDao", UserDao.class);
