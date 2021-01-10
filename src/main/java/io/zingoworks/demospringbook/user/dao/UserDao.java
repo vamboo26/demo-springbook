@@ -1,6 +1,7 @@
 package io.zingoworks.demospringbook.user.dao;
 
 import io.zingoworks.demospringbook.user.domain.User;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,12 +12,22 @@ public class UserDao {
 	
 	private ConnectionMaker connectionMaker;
 	
-	private Connection c;
-	private User user;
-	
 	public UserDao(ConnectionMaker connectionMaker) {
 		this.connectionMaker = connectionMaker;
 	}
+	
+	public UserDao() {
+		// DaoFactory를 통한 의존관계 검색
+		DaoFactory daoFactory = new DaoFactory();
+		this.connectionMaker = daoFactory.connectionMaker();
+	}
+	
+//	public UserDao() {
+//		// 스프링의 IoC 컨테이너(애플리케이션 컨텍스트)를 통한 의존관계 검색
+//		AnnotationConfigApplicationContext applicationContext =
+//				new AnnotationConfigApplicationContext(DaoFactory.class);
+//		this.connectionMaker = applicationContext.getBean("connectionMaker", ConnectionMaker.class);
+//	}
 	
 	public void add(User user) throws ClassNotFoundException, SQLException {
 		Connection c = this.connectionMaker.makeNewConnection();
@@ -34,7 +45,7 @@ public class UserDao {
 	}
 	
 	public User get(String id) throws ClassNotFoundException, SQLException {
-		this.c = this.connectionMaker.makeNewConnection();
+		Connection c = this.connectionMaker.makeNewConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 				"select * from users where id = ?");
