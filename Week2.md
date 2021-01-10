@@ -131,6 +131,8 @@ DConnectionMaker ..|> ConnectionMaker
 
 ### 1.8.3 DataSource 인터페이스로 변환
 #### DataSource 인터페이스 적용
+- 자바에는 DB 커넥션을 가져오는 오브젝트의 기능을 추상화한 DataSource 이미 존재
+
 #### 자바 코드 설정 방식
 #### XML 설정 방식
 

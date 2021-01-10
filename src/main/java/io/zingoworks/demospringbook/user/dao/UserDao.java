@@ -2,6 +2,7 @@ package io.zingoworks.demospringbook.user.dao;
 
 import io.zingoworks.demospringbook.user.domain.User;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,32 +10,14 @@ import java.sql.SQLException;
 
 public class UserDao {
 	
-	private ConnectionMaker connectionMaker;
+	private DataSource dataSource;
 	
-//	public UserDao(ConnectionMaker connectionMaker) {
-//		this.connectionMaker = connectionMaker;
-//	}
-	
-	// setter를 통한 의존성 주입
-	public void setConnectionMaker(ConnectionMaker connectionMaker) {
-		this.connectionMaker = connectionMaker;
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 	
-//	public UserDao() {
-//		// DaoFactory를 통한 의존관계 검색
-//		CountingDaoFactory countingDaoFactory = new CountingDaoFactory();
-//		this.connectionMaker = countingDaoFactory.connectionMaker();
-//	}
-	
-//	public UserDao() {
-//		// 스프링의 IoC 컨테이너(애플리케이션 컨텍스트)를 통한 의존관계 검색
-//		AnnotationConfigApplicationContext applicationContext =
-//				new AnnotationConfigApplicationContext(DaoFactory.class);
-//		this.connectionMaker = applicationContext.getBean("connectionMaker", ConnectionMaker.class);
-//	}
-	
-	public void add(User user) throws ClassNotFoundException, SQLException {
-		Connection c = this.connectionMaker.makeNewConnection();
+	public void add(User user) throws SQLException {
+		Connection c = dataSource.getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 				"insert into users(id, name, password) values(?,?,?)");
@@ -48,8 +31,8 @@ public class UserDao {
 		c.close();
 	}
 	
-	public User get(String id) throws ClassNotFoundException, SQLException {
-		Connection c = this.connectionMaker.makeNewConnection();
+	public User get(String id) throws SQLException {
+		Connection c = dataSource.getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 				"select * from users where id = ?");
