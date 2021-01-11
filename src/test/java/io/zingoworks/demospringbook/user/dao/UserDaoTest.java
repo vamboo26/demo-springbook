@@ -6,7 +6,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.sql.SQLException;
-import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,21 +16,23 @@ class UserDaoTest {
 		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		
 		UserDao dao = context.getBean("userDao", UserDao.class);
-		User user = new User();
-		user.setId(String.valueOf(LocalTime.now()).substring(0, 10));
-		user.setName("징고");
-		user.setPassword("1234");
+		User user1 = new User("1", "one", "1234");
+		User user2 = new User("2", "two", "1234");
 		
 		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
-		dao.add(user);
-		assertThat(dao.getCount()).isEqualTo(1);
+		dao.add(user1);
+		dao.add(user2);
+		assertThat(dao.getCount()).isEqualTo(2);
 		
-		User user2 = dao.get(user.getId());
+		User userget1 = dao.get(user1.getId());
+		assertThat(userget1.getName()).isEqualTo(user1.getName());
+		assertThat(userget1.getPassword()).isEqualTo(user1.getPassword());
 		
-		assertThat(user2.getName()).isEqualTo(user.getName());
-		assertThat(user2.getPassword()).isEqualTo(user.getPassword());
+		User userget2 = dao.get(user2.getId());
+		assertThat(userget2.getName()).isEqualTo(user2.getName());
+		assertThat(userget2.getPassword()).isEqualTo(user2.getPassword());
 	}
 	
 	@Test
