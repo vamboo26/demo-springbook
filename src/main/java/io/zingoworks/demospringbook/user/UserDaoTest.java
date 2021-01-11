@@ -13,7 +13,7 @@ import java.time.LocalTime;
 public class UserDaoTest {
 	
 	public static void main(String[] args) throws SQLException {
-		ApplicationContext applicationContext = new GenericXmlApplicationContext("application-context.xml");
+		ApplicationContext applicationContext = new GenericXmlApplicationContext("applicationContext.xml");
 		
 		UserDao dao = applicationContext.getBean("userDao", UserDao.class);
 		
