@@ -33,4 +33,26 @@ class UserDaoTest {
 		assertThat(user2.getName()).isEqualTo(user.getName());
 		assertThat(user2.getPassword()).isEqualTo(user.getPassword());
 	}
+	
+	@Test
+	void count() throws SQLException {
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		
+		UserDao dao = context.getBean("userDao", UserDao.class);
+		User user1 = new User("1", "one", "1234");
+		User user2 = new User("2", "two", "1234");
+		User user3 = new User("3", "three", "1234");
+		
+		dao.deleteAll();
+		assertThat(dao.getCount()).isEqualTo(0);
+		
+		dao.add(user1);
+		assertThat(dao.getCount()).isEqualTo(1);
+		
+		dao.add(user2);
+		assertThat(dao.getCount()).isEqualTo(2);
+		
+		dao.add(user3);
+		assertThat(dao.getCount()).isEqualTo(3);
+	}
 }
