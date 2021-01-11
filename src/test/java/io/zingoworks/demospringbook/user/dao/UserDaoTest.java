@@ -22,7 +22,11 @@ class UserDaoTest {
 		user.setName("징고");
 		user.setPassword("1234");
 		
+		dao.deleteAll();
+		assertThat(dao.getCount()).isEqualTo(0);
+		
 		dao.add(user);
+		assertThat(dao.getCount()).isEqualTo(1);
 		
 		User user2 = dao.get(user.getId());
 		

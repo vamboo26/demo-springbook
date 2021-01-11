@@ -57,3 +57,6 @@
     - 테스트를 반복하여도 **항상 동일한 결과**를 얻을 수 있다
 #### deleteAll()의 getCount() 추가
 - deleteAll()
+- getCount()
+
+#### deleteAll()과 getCount()의 테스트
