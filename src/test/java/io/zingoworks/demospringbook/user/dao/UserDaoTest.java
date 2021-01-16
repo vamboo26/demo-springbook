@@ -1,9 +1,9 @@
 package io.zingoworks.demospringbook.user.dao;
 
 import io.zingoworks.demospringbook.user.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -14,14 +14,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserDaoTest {
 	
+	private UserDao dao;
+	
+	private User user1;
+	private User user2;
+	private User user3;
+	
+	@BeforeEach
+	void setUp() {
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+		
+		this.dao = context.getBean("userDao", UserDao.class);
+		
+		this.user1 = new User("1", "one", "1234");
+		this.user2 = new User("2", "two", "1234");
+		this.user3 = new User("3", "three", "1234");
+	}
+	
 	@Test
 	void addAndGet() throws SQLException {
-		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-		
-		UserDao dao = context.getBean("userDao", UserDao.class);
-		User user1 = new User("1", "one", "1234");
-		User user2 = new User("2", "two", "1234");
-		
 		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
@@ -40,9 +51,6 @@ class UserDaoTest {
 	
 	@Test
 	void getUserFailure() throws SQLException {
-		GenericXmlApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-		
-		UserDao dao = context.getBean("userDao", UserDao.class);
 		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
@@ -51,13 +59,6 @@ class UserDaoTest {
 	
 	@Test
 	void count() throws SQLException {
-		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-		
-		UserDao dao = context.getBean("userDao", UserDao.class);
-		User user1 = new User("1", "one", "1234");
-		User user2 = new User("2", "two", "1234");
-		User user3 = new User("3", "three", "1234");
-		
 		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
