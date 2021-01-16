@@ -20,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class) // replace junit4 @Runwith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/applicationContext.xml")
-@DirtiesContext// 테스트 메소드에서 애플리케이션 컨텍스트의 구성이나 상태를 변경한다는 것을 테스트 컨텍스트 프레임워크에 알려준다 <- 이를 통해 다른 테스트 클래스와 같은 애플리케이션 컨텍스트를 공유하지 않도록 해준다.
+@ContextConfiguration(locations = "/test-applicationContext.xml")
 class UserDaoTest {
 	
 	@Autowired
@@ -42,11 +41,6 @@ class UserDaoTest {
 	void setUp() {
 		System.out.println("this.context = " + this.context); // context는 동일 오브젝트 재사용
 		System.out.println("this = " + this); // UserDaoTest는 매번 새로운 오브젝트
-		
-		DataSource dataSource = new SingleConnectionDataSource(
-				"jdbc:mysql://localhost/springbook", "root", "1234", true
-		);
-		dao.setDataSource(dataSource);
 		
 		this.user1 = new User("1", "one", "1234");
 		this.user2 = new User("2", "two", "1234");
