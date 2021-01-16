@@ -3,35 +3,23 @@ package io.zingoworks.demospringbook.user.dao;
 import io.zingoworks.demospringbook.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(SpringExtension.class) // replace junit4 @Runwith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-applicationContext.xml")
+//@ExtendWith(SpringExtension.class) // replace junit4 @Runwith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = "/test-applicationContext.xml")
 class UserDaoTest {
+
+//	@Autowired
+//	private ApplicationContext context;
 	
-	@Autowired
-	private ApplicationContext context;
-	
-	@Autowired
+	//	@Autowired
 	private UserDao dao;
-	
-	@Qualifier("qualifiedConnectionMaker")
-	@Autowired
-	private ConnectionMaker cm;
 	
 	private User user1;
 	private User user2;
@@ -39,8 +27,10 @@ class UserDaoTest {
 	
 	@BeforeEach
 	void setUp() {
-		System.out.println("this.context = " + this.context); // context는 동일 오브젝트 재사용
-		System.out.println("this = " + this); // UserDaoTest는 매번 새로운 오브젝트
+		this.dao = new UserDao();
+		dao.setDataSource(new SingleConnectionDataSource(
+				"jdbc:mysql://localhost/springbook", "root", "1234", true
+		));
 		
 		this.user1 = new User("1", "one", "1234");
 		this.user2 = new User("2", "two", "1234");
