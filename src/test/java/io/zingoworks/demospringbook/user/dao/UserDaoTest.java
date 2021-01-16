@@ -4,10 +4,13 @@ import io.zingoworks.demospringbook.user.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserDaoTest {
 	
@@ -33,6 +36,17 @@ class UserDaoTest {
 		User userget2 = dao.get(user2.getId());
 		assertThat(userget2.getName()).isEqualTo(user2.getName());
 		assertThat(userget2.getPassword()).isEqualTo(user2.getPassword());
+	}
+	
+	@Test
+	void getUserFailure() throws SQLException {
+		GenericXmlApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+		
+		UserDao dao = context.getBean("userDao", UserDao.class);
+		dao.deleteAll();
+		assertThat(dao.getCount()).isEqualTo(0);
+		
+		assertThrows(EmptyResultDataAccessException.class, () -> dao.get("unknown_id"));
 	}
 	
 	@Test
