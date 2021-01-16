@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,6 +25,10 @@ class UserDaoTest {
 	
 	@Autowired
 	private UserDao dao;
+	
+	@Qualifier("qualifiedConnectionMaker")
+	@Autowired
+	private ConnectionMaker cm;
 	
 	private User user1;
 	private User user2;
