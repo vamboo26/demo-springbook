@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,11 +17,18 @@ import java.sql.SQLException;
 @Component
 public class UserDao {
 	
-	@Autowired
+	// @Autowired 코드를 이용한 수동 DI (not Spring)
 	private JdbcContext jdbcContext;
 	
 	@Autowired
 	private DataSource dataSource;
+	
+	// JdbcContext가 의존하는 다른 Bean은 UserDao가 DI컨테이너의 역할로 주입
+	@PostConstruct
+	public void setJdbcContext() {
+		this.jdbcContext = new JdbcContext();
+		jdbcContext.setDataSource(this.dataSource);
+	}
 	
 	public void add(User user) throws SQLException {
 		this.jdbcContext.workWithStatementStrategy(c -> {
