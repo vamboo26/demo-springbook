@@ -4,6 +4,7 @@ import io.zingoworks.demospringbook.user.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.sql.DataSource;
+import javax.swing.plaf.nimbus.State;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,7 +67,9 @@ public class UserDao {
 		
 		try {
 			c = dataSource.getConnection();
-			ps = c.prepareStatement("delete from users");
+			
+			DeleteAllStatement deleteAllStatement = new DeleteAllStatement();
+			ps = deleteAllStatement.makePreparedStatement(c);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw e;
