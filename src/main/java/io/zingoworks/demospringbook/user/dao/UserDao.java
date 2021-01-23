@@ -70,8 +70,19 @@ public class UserDao {
 		return user;
 	}
 	
-	public void deleteAllNew() throws SQLException {
-		this.jdbcContext.workWithStatementStrategy(c -> c.prepareStatement("delete from users"));
+	public void deleteAll() throws SQLException {
+		executeSql("delete from users"); // 변하는 쿼리와 변하지 않는 수행과정을 분리
+	}
+	
+	private void executeSql(final String query) throws SQLException {
+		this.jdbcContext.workWithStatementStrategy(
+				new StatementStrategy() {
+					@Override
+					public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+						return c.prepareStatement(query);
+					}
+				}
+		);
 	}
 	
 	public void deleteAllLegacy() throws SQLException {

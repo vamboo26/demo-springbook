@@ -34,7 +34,7 @@ class UserDaoTest {
 	
 	@Test
 	void addAndGet() throws SQLException {
-		dao.deleteAllNew();
+		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
 		dao.add(user1);
@@ -52,7 +52,7 @@ class UserDaoTest {
 	
 	@Test
 	void getUserFailure() throws SQLException {
-		dao.deleteAllNew();
+		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
 		assertThrows(EmptyResultDataAccessException.class, () -> dao.get("unknown_id"));
@@ -60,7 +60,7 @@ class UserDaoTest {
 	
 	@Test
 	void count() throws SQLException {
-		dao.deleteAllNew();
+		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
 		dao.add(user1);
