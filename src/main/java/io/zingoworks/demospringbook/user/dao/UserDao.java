@@ -31,6 +31,10 @@ public class UserDao {
 	}
 	
 	public void add(User user) throws SQLException {
+		this.jdbcContext.executeSqlAdd("insert into users(id, name, password) values(?,?,?)", user.getId(), user.getName(), user.getPassword());
+	}
+	
+	public void addLegacy(User user) throws SQLException {
 		this.jdbcContext.workWithStatementStrategy(c -> {
 			PreparedStatement ps = c.prepareStatement(
 					"insert into users(id, name, password) values(?,?,?)");
@@ -71,18 +75,7 @@ public class UserDao {
 	}
 	
 	public void deleteAll() throws SQLException {
-		executeSql("delete from users"); // 변하는 쿼리와 변하지 않는 수행과정을 분리
-	}
-	
-	private void executeSql(final String query) throws SQLException {
-		this.jdbcContext.workWithStatementStrategy(
-				new StatementStrategy() {
-					@Override
-					public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-						return c.prepareStatement(query);
-					}
-				}
-		);
+		this.jdbcContext.executeSql("delete from users"); // 변하는 쿼리와 변하지 않는 수행과정을 분리
 	}
 	
 	public void deleteAllLegacy() throws SQLException {
