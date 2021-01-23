@@ -4,7 +4,6 @@ import io.zingoworks.demospringbook.user.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.sql.DataSource;
-import javax.swing.plaf.nimbus.State;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,7 +60,12 @@ public class UserDao {
 		return user;
 	}
 	
-	public void deleteAll() throws SQLException {
+	public void deleteAllNew() throws SQLException {
+		DeleteAllStatement deleteAllStatement = new DeleteAllStatement();
+		jdbcContextWithStatementStrategy(deleteAllStatement);
+	}
+	
+	public void deleteAllLegacy() throws SQLException {
 		Connection c = null;
 		PreparedStatement ps = null;
 		
@@ -69,7 +73,7 @@ public class UserDao {
 			c = dataSource.getConnection();
 			
 			DeleteAllStatement deleteAllStatement = new DeleteAllStatement();
-			ps = deleteAllStatement.makePreparedStatement(c);
+			ps = deleteAllStatement.makePreparedStatement(c); //FIXME 클라이언트로서 strategy 를 주입하는 게 아닌, concrete strategy 를 직접 알고, 사용하는 모습 💩
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw e;
@@ -110,6 +114,34 @@ public class UserDao {
 				
 				}
 			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				
+				}
+			}
+			if (c != null) {
+				try {
+					c.close();
+				} catch (SQLException e) {
+				
+				}
+			}
+		}
+	}
+	
+	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+		Connection c = null;
+		PreparedStatement ps = null;
+		
+		try {
+			c = dataSource.getConnection();
+			ps = stmt.makePreparedStatement(c);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw e;
+		} finally {
 			if (ps != null) {
 				try {
 					ps.close();
