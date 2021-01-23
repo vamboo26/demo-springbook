@@ -3,23 +3,22 @@ package io.zingoworks.demospringbook.user.dao;
 import io.zingoworks.demospringbook.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-//@ExtendWith(SpringExtension.class) // replace junit4 @Runwith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "/test-applicationContext.xml")
+@ExtendWith(SpringExtension.class) // replace junit4 @Runwith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 class UserDaoTest {
-
-//	@Autowired
-//	private ApplicationContext context;
 	
-	//	@Autowired
+	@Autowired
 	private UserDao dao;
 	
 	private User user1;
@@ -28,17 +27,6 @@ class UserDaoTest {
 	
 	@BeforeEach
 	void setUp() {
-		DataSource dataSource = new SingleConnectionDataSource(
-				"jdbc:mysql://localhost/springbook", "root", "1234", true
-		);
-		
-		JdbcContext jdbcContext = new JdbcContext();
-		jdbcContext.setDataSource(dataSource);
-		
-		this.dao = new UserDao();
-		dao.setJdbcContext(jdbcContext);
-		dao.setDataSource(dataSource); //FIXME for backward compatibility
-		
 		this.user1 = new User("1", "one", "1234");
 		this.user2 = new User("2", "two", "1234");
 		this.user3 = new User("3", "three", "1234");

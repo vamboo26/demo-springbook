@@ -2,9 +2,10 @@ package io.zingoworks.demospringbook;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
+import javax.sql.DataSource;
 
 @SpringBootApplication
 public class DemoSpringbookApplication {
@@ -14,12 +15,12 @@ public class DemoSpringbookApplication {
 	}
 	
 	@Bean
-	public SimpleDriverDataSource dataSource() {
-		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-		dataSource.setDriverClass(com.mysql.cj.jdbc.Driver.class);
-		dataSource.setUrl("jdbc:mysql://localhost/springbook");
-		dataSource.setUsername("root");
-		dataSource.setPassword("1234");
-		return dataSource;
+	public DataSource getDataSource() {
+		DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+		dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
+		dataSourceBuilder.url("jdbc:mysql://localhost/springbook");
+		dataSourceBuilder.username("root");
+		dataSourceBuilder.password("1234");
+		return dataSourceBuilder.build();
 	}
 }
