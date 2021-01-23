@@ -18,18 +18,22 @@ public class UserDao {
 	}
 	
 	public void add(User user) throws SQLException {
-		Connection c = dataSource.getConnection();
+		class InnerLocalAddStatement implements StatementStrategy {
+			@Override
+			public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+				PreparedStatement ps = c.prepareStatement(
+						"insert into users(id, name, password) values(?,?,?)");
+				
+				ps.setString(1, user.getId());
+				ps.setString(2, user.getName());
+				ps.setString(3, user.getPassword());
+				return ps;
+			}
+			
+		}
 		
-		PreparedStatement ps = c.prepareStatement(
-				"insert into users(id, name, password) values(?,?,?)");
-		ps.setString(1, user.getId());
-		ps.setString(2, user.getName());
-		ps.setString(3, user.getPassword());
-		
-		ps.executeUpdate();
-		
-		ps.close();
-		c.close();
+		InnerLocalAddStatement addStatement = new InnerLocalAddStatement();
+		jdbcContextWithStatementStrategy(addStatement);
 	}
 	
 	public User get(String id) throws SQLException {
