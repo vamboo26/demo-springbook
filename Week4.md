@@ -64,3 +64,13 @@
     2-2. local class
     2-3. anonymous inner class
 ```
+
+## 3.4 컨텍스트와 DI
+- 클라이언트 : `UserDao.*` 컨텍스트에 적절한 전략을 주입(메소드에 해당하는)
+- 컨텍스트 : `UserDao.jdbcContextWithStatementStrategy()` PreparedStatement를 실행하는 JDBC의 작업 흐름
+- 전략 : `StatementStrategy.makePreparedStatement()`의 concrete methods, PreparedStatement의 생성
+### 3.4.1 JdbcContext의 분리
+#### 클래스 분리
+- UserDao.jdbcContextWithStatementStrategy()를 JdbcContext.workWithStatementStrategy()로 분리
+#### 빈 의존관계 변경
+

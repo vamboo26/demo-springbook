@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,10 +28,16 @@ class UserDaoTest {
 	
 	@BeforeEach
 	void setUp() {
-		this.dao = new UserDao();
-		dao.setDataSource(new SingleConnectionDataSource(
+		DataSource dataSource = new SingleConnectionDataSource(
 				"jdbc:mysql://localhost/springbook", "root", "1234", true
-		));
+		);
+		
+		JdbcContext jdbcContext = new JdbcContext();
+		jdbcContext.setDataSource(dataSource);
+		
+		this.dao = new UserDao();
+		dao.setJdbcContext(jdbcContext);
+		dao.setDataSource(dataSource); //FIXME for backward compatibility
 		
 		this.user1 = new User("1", "one", "1234");
 		this.user2 = new User("2", "two", "1234");

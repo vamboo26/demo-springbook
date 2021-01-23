@@ -1,10 +1,12 @@
 package io.zingoworks.demospringbook.user.dao;
 
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+@Component
 @NoArgsConstructor
 public class CountingConnectionMaker implements ConnectionMaker {
 	
