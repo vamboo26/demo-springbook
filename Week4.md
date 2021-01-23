@@ -78,7 +78,7 @@
 - 인터페이스를 사용하지 않았지만, JdbcContext를 스프링을 이용해 UserDao 객체에서 사용하게 주입한 것은 DI의 기본
 - 왜 JdbcConext를 UserDao와 DI 구조로 만들어야할까? with Spring
     1. 가변적인 상태정보를 갖고 있지 않아 싱글톤 빈으로 적합 -> 공유
-    2. JdbcContext 자체가 이미 다른 빈에 의존 ⭐, JdbcContext가 관리되기 위해서라도 빈 등록이 필요
+    2. JdbcContext 자체가 이미 다른 빈에 의존, JdbcContext가 관리되기 위해서라도 빈 등록이 필요
     3. 매우 긴밀하고 강력한 결합, 응집도
         - Jdbc가 아닌 JPA 등으로 변경되면 어차피 JdbcContext 자체가 변경되어야 한다
     - 이러한 이유로 인터페이스를 사용하지 않지만, 이는 마지막에 고려해봄직하다
@@ -105,10 +105,10 @@
 - 메소드 레벨에서의 DI
 - 콜백이 자신을 생성한 `클라이언트의 정보`를 참조한다는 것도 특징
 #### JdbcContext에 적용된 템플릿/콜백
-- 클라이언트(UserDao)  
+- 클라이언트(UserDao)
     1. 콜백(익명클래스(ex new StatementStrategy() {...}))을 생성  
     2. 콜백을 전달(jdbcContext.workWithStatementStrategy(callBack))  
-- 템플릿
+- 템플릿  
     3. 콜백을 받아 workflow 시작 (workWithStatementStrategy로 전달된 callBack)  
     4. 참조정보 생성  
     5. 콜백에 참조정보 전달(stmt.makePreparedStatement(참조정보))  
@@ -132,8 +132,13 @@
             - 바뀌는 부분이 동시에 여러 종류라면 템플릿/콜백 패턴을 고려
 
 #### 테스트와 try/catch/finally
-
 #### 중복의 제거와 템플릿/콜백 설계
+- 앞서 만든 Cal* 에 변경이 생긴다면? 기능이 추가된다면?
+    - 템플릿/콜백을 생각해보자
+    - 변하는 부분과 변하지 않는 부분을 구분
+        - 템플릿과 콜백을 구분
+            - 각각이 무엇을 전달해야할까
+
 #### 템플릿/콜백의 재설계
 #### 제네릭스를 이용한 콜백 인터페이스
 
