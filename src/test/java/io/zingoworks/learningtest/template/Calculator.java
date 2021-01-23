@@ -6,11 +6,21 @@ import java.io.IOException;
 
 public class Calculator {
 
-    public Integer lineReadTemplate(String filePath, LineCallback callback, int initVal) throws IOException {
+    public String concatenate(String path) throws IOException {
+        LineCallback<String> concatenateCallback = new LineCallback<String>() {
+            @Override
+            public String doSomethingWithLine(String line, String value) {
+                return value + line;
+            }
+        };
+        return lineReadTemplate(path, concatenateCallback, "");
+    }
+
+    public <T> T lineReadTemplate(String filePath, LineCallback<T> callback, T initVal) throws IOException {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filePath));
-            Integer res = initVal;
+            T res = initVal;
             String line;
             while ((line = br.readLine()) != null) {
                 res = callback.doSomethingWithLine(line, res);
@@ -52,7 +62,7 @@ public class Calculator {
     }
 
     public int sum(String path) throws IOException {
-        LineCallback sumCallback = new LineCallback() {
+        LineCallback<Integer> sumCallback = new LineCallback<Integer>() {
             @Override
             public Integer doSomethingWithLine(String line, Integer value) {
                 return value + Integer.parseInt(line);
@@ -62,7 +72,7 @@ public class Calculator {
     }
 
     public Integer multiply(String path) throws IOException {
-        LineCallback multiplyCallback = new LineCallback() {
+        LineCallback<Integer> multiplyCallback = new LineCallback<Integer>() {
             @Override
             public Integer doSomethingWithLine(String line, Integer value) {
                 return value * Integer.parseInt(line);
