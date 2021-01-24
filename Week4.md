@@ -143,6 +143,7 @@
 #### 제네릭스를 이용한 콜백 인터페이스
 
 ## 3.6 스프링의 JdbcTemplate
+- JdbcContext 대신 JdbcTemplate를 사용해보자
 ### 3.6.1 update()
 ### 3.6.2 queryForInt()
 ### 3.6.3 queryForObject()
