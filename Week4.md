@@ -148,6 +148,8 @@
 ### 3.6.2 queryForInt()
 ### 3.6.3 queryForObject()
 ### 3.6.4 query()
+
+
 #### 기능 정의와 테스트 작성
 #### query() 템플릿을 이용하는 getAll() 구현
 #### 테스트 보완
