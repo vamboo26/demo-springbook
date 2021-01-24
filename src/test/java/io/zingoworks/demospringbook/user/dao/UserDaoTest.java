@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +33,7 @@ class UserDaoTest {
 	}
 	
 	@Test
-	void addAndGet() throws SQLException {
+	void addAndGet() {
 		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
@@ -52,7 +51,7 @@ class UserDaoTest {
 	}
 	
 	@Test
-	void getUserFailure() throws SQLException {
+	void getUserFailure() {
 		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
@@ -60,7 +59,7 @@ class UserDaoTest {
 	}
 	
 	@Test
-	void count() throws SQLException {
+	void count() {
 		dao.deleteAll();
 		assertThat(dao.getCount()).isEqualTo(0);
 		
@@ -77,6 +76,9 @@ class UserDaoTest {
 	@Test
 	void getAll() {
 		dao.deleteAll();
+		
+		List<User> users0 = dao.getAll();
+		assertThat(users0.size()).isEqualTo(0);
 		
 		dao.add(user1);
 		List<User> users1 = dao.getAll();
