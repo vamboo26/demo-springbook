@@ -1,6 +1,5 @@
 package io.zingoworks.demospringbook.user.dao;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -9,8 +8,8 @@ import javax.sql.DataSource;
 public class CountingDaoFactory {
 	
 	//	@Bean
-	public UserDao userDao() {
-		return new UserDao();
+	public UserDaoJdbc userDao() {
+		return new UserDaoJdbc();
 	}
 	
 	//	@Bean

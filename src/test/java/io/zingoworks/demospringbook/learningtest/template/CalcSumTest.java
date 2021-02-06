@@ -1,4 +1,4 @@
-package io.zingoworks.learningtest.template;
+package io.zingoworks.demospringbook.learningtest.template;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

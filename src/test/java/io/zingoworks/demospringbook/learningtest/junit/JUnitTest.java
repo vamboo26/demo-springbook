@@ -1,4 +1,4 @@
-package io.zingoworks.learningtest.junit;
+package io.zingoworks.demospringbook.learningtest.junit;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

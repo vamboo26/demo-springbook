@@ -1,4 +1,4 @@
-package io.zingoworks.learningtest.template;
+package io.zingoworks.demospringbook.learningtest.template;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

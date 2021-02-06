@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -16,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class) // replace junit4 @Runwith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-class UserDaoTest {
+class UserDaoJdbcTest {
 	
 	@Autowired
 	private UserDao dao;
@@ -30,6 +32,26 @@ class UserDaoTest {
 		this.user1 = new User("1", "one", "1234");
 		this.user2 = new User("2", "two", "1234");
 		this.user3 = new User("3", "three", "1234");
+	}
+	
+	@Test
+	void duplicateKey() {
+		assertThrows(DuplicateKeyException.class,
+				() -> {
+					dao.deleteAll();
+					dao.add(user1);
+					dao.add(user1); // key 중복 발생
+				});
+	}
+	
+	@Test
+	void dataAccessException() {
+		assertThrows(DataAccessException.class,
+				() -> {
+					dao.deleteAll();
+					dao.add(user1);
+					dao.add(user1); // key 중복 발생
+				});
 	}
 	
 	@Test

@@ -9,7 +9,7 @@
 		<property name="realConnectionMaker" ref="realConnectionMaker"/>
 	</bean>
 	
-	<bean id="userDao" class="io.zingoworks.demospringbook.user.dao.UserDao">
+	<bean id="userDao" class="io.zingoworks.demospringbook.user.dao.UserDaoJdbc">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	<!-- property로 지정하는 것 <- 자바빈 규약에서의 property는 getter/setter 있어야하므로 작성해줘야 인식 가능(?) -->

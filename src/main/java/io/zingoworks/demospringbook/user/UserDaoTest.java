@@ -1,6 +1,6 @@
 package io.zingoworks.demospringbook.user;
 
-import io.zingoworks.demospringbook.user.dao.UserDao;
+import io.zingoworks.demospringbook.user.dao.UserDaoJdbc;
 import io.zingoworks.demospringbook.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +15,7 @@ public class UserDaoTest {
 	public static void main(String[] args) throws SQLException {
 		ApplicationContext applicationContext = new GenericXmlApplicationContext("applicationContext.xml");
 		
-		UserDao dao = applicationContext.getBean("userDao", UserDao.class);
+		UserDaoJdbc dao = applicationContext.getBean("userDaoJdbc", UserDaoJdbc.class);
 		
 		User user = new User();
 		user.setId(String.valueOf(LocalTime.now()).substring(0, 10));
