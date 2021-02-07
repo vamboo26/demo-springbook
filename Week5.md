@@ -14,9 +14,11 @@
 
 ### 4.1.2 예외의 종류와 특징
 - Error
+    - OOM, ThreadDeath
+    - 주로 JVM에서 발생시키며 애플리케이션 레벨에서 처리X
 - Exception
     - Exception (checked)
-   - RuntimeException (unchecked)
+    - RuntimeException (unchecked)
 
 ### 4.1.3 예외처리 방법
 #### 예외 복구
