@@ -1,6 +1,7 @@
 package io.zingoworks.demospringbook.learningtest.exception;
 
 import io.zingoworks.demospringbook.user.dao.UserDao;
+import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,9 +34,9 @@ public class SqlExceptionTest {
 	
 	@BeforeEach
 	void setUp() {
-		this.user1 = new User("1", "one", "1234");
-		this.user2 = new User("2", "two", "1234");
-		this.user3 = new User("3", "three", "1234");
+		this.user1 = new User("1", "one", "1234", Level.BASIC, 0, 0);
+		this.user2 = new User("2", "two", "1234", Level.BASIC, 0, 0);
+		this.user3 = new User("3", "three", "1234", Level.BASIC, 0, 0);
 	}
 	
 	@Test

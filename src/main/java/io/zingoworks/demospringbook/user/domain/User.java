@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+	
 	private String id;
 	private String name;
 	private String password;
@@ -17,9 +18,13 @@ public class User {
 	private int loginSequence;
 	private int recommendationCount;
 	
-	public User(String id, String name, String password) {
-		this.id = id;
-		this.name = name;
-		this.password = password;
+	public void upgradeLevel() {
+		Level next = this.level.getNext();
+		
+		if (next == null) {
+			throw new IllegalStateException(this.level + "은 업그레이드가 불가능합니다");
+		} else {
+			this.level = next;
+		}
 	}
 }

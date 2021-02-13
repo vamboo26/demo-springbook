@@ -8,12 +8,13 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum Level {
-	BASIC(1),
-	SILVER(2),
-	GOLD(3),
+	GOLD(3, null),
+	SILVER(2, GOLD),
+	BASIC(1, SILVER),
 	;
 	
 	private final int value;
+	private final Level next;
 	
 	public static Level findByValue(int value) {
 		return Arrays.stream(values())

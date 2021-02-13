@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.zingoworks.demospringbook.user.service.UserService.MIN_LOGIN_SEQUENCE_FOR_SILVER;
+import static io.zingoworks.demospringbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = DemoSpringbookApplication.class)
@@ -28,11 +30,11 @@ class UserServiceTest {
 	@BeforeEach
 	void setUp() {
 		users = Arrays.asList(
-				new User("a", "에이", "p1", Level.BASIC, 49, 0),
-				new User("b", "비", "p2", Level.BASIC, 50, 0),
-				new User("c", "시", "p3", Level.SILVER, 60, 29),
-				new User("d", "디", "p4", Level.SILVER, 60, 30),
-				new User("e", "이", "p5", Level.GOLD, 100, 100)
+				new User("a", "에이", "p1", Level.BASIC, MIN_LOGIN_SEQUENCE_FOR_SILVER - 1, 0),
+				new User("b", "비", "p2", Level.BASIC, MIN_LOGIN_SEQUENCE_FOR_SILVER, 0),
+				new User("c", "시", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1),
+				new User("d", "디", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
+				new User("e", "이", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
 		);
 	}
 	
@@ -68,15 +70,20 @@ class UserServiceTest {
 		
 		userService.upgradeLevels();
 		
-		checkLevel(users.get(0), Level.BASIC);
-		checkLevel(users.get(1), Level.SILVER);
-		checkLevel(users.get(2), Level.SILVER);
-		checkLevel(users.get(3), Level.GOLD);
-		checkLevel(users.get(4), Level.GOLD);
+		checkLevelUpgraded(users.get(0), false);
+		checkLevelUpgraded(users.get(1), true);
+		checkLevelUpgraded(users.get(2), false);
+		checkLevelUpgraded(users.get(3), true);
+		checkLevelUpgraded(users.get(4), false);
 	}
 	
-	private void checkLevel(User user, Level expectedLevel) {
+	private void checkLevelUpgraded(User user, boolean upgraded) {
 		User userUpdate = userDao.get(user.getId());
-		assertThat(userUpdate.getLevel()).isEqualTo(expectedLevel);
+		
+		if (upgraded) {
+			assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel().getNext());
+		} else {
+			assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel());
+		}
 	}
 }
