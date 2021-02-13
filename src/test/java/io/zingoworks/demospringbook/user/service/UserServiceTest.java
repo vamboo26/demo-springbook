@@ -70,7 +70,7 @@ class UserServiceTest {
 	}
 	
 	@Test
-	void upgradeLevels() throws Exception {
+	void upgradeLevels() {
 		userDao.deleteAll();
 		for (User user : users) {
 			userDao.add(user);
@@ -86,7 +86,7 @@ class UserServiceTest {
 	}
 	
 	@Test
-	void upgradeAllOrNothing() throws Exception {
+	void upgradeAllOrNothing() {
 		UserService testUserService = new TestUserService(users.get(3).getId());
 		testUserService.setUserDao(this.userDao);
 		testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);

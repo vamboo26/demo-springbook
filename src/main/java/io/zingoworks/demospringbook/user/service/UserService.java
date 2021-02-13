@@ -5,12 +5,13 @@ import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -40,10 +41,10 @@ public class UserService {
 		this.dataSource = dataSource;
 	}
 	
-	public void upgradeLevels() throws SQLException {
-		TransactionSynchronizationManager.initSynchronization(); // 트랜잭션 동기화 작업 초기화
-		Connection c = DataSourceUtils.getConnection(dataSource); // 커넥션 생성
-		c.setAutoCommit(false); // 트랜잭션 시작
+	public void upgradeLevels() {
+		PlatformTransactionManager transactionManager
+				= new DataSourceTransactionManager(this.dataSource);
+		TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try {
 			List<User> users = userDao.getAll();
@@ -53,14 +54,10 @@ public class UserService {
 					upgradeLevel(user);
 				}
 			}
-			c.commit(); // 정상흐름 : 트랜잭션 커밋
+			transactionManager.commit(status);
 		} catch (Exception e) {
-			c.rollback(); // 예외흐름 : 트랙잭션 롤백
+			transactionManager.rollback(status);
 			throw e;
-		} finally {
-			DataSourceUtils.releaseConnection(c, dataSource); // 커넥션 close
-			TransactionSynchronizationManager.unbindResource(this.dataSource); // 트랜잭션 동기화 작업 종료
-			TransactionSynchronizationManager.clearSynchronization();
 		}
 	}
 	
