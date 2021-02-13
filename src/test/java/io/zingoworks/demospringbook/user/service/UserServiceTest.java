@@ -42,6 +42,24 @@ class UserServiceTest {
 	}
 	
 	@Test
+	void add() {
+		userDao.deleteAll();
+		
+		User userWithGoldLevel = users.get(4);
+		User userWithoutLevel = users.get(0);
+		userWithoutLevel.setLevel(null);
+		
+		userService.add(userWithGoldLevel);
+		userService.add(userWithoutLevel);
+		
+		User userWithGoldLevelRead = userDao.get(userWithGoldLevel.getId());
+		User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
+		
+		assertThat(userWithGoldLevelRead.getLevel()).isEqualTo(userWithGoldLevel.getLevel());
+		assertThat(userWithoutLevelRead.getLevel()).isEqualTo(userWithoutLevel.getLevel());
+	}
+	
+	@Test
 	void upgradeLevels() {
 		userDao.deleteAll();
 		for (User user : users) {
