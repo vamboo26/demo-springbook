@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
@@ -32,6 +34,10 @@ class UserServiceTest {
 	
 	@Autowired
 	private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	@Qualifier(value = "dummyMailSender")
+	private MailSender mailSender;
 	
 	private List<User> users;
 	
@@ -76,6 +82,7 @@ class UserServiceTest {
 			userDao.add(user);
 		}
 		
+		userService.setMailSender(this.mailSender);
 		userService.upgradeLevels();
 		
 		checkLevelUpgraded(users.get(0), false);
@@ -91,6 +98,7 @@ class UserServiceTest {
 		testUserService.setUserDao(this.userDao);
 		testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
 		testUserService.setTransactionManager(this.transactionManager);
+		testUserService.setMailSender(this.mailSender);
 		
 		userDao.deleteAll();
 		for (User user : users) {
