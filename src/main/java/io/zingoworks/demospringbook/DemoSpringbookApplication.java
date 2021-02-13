@@ -4,6 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -22,5 +24,10 @@ public class DemoSpringbookApplication {
 		dataSourceBuilder.username("root");
 		dataSourceBuilder.password("1234");
 		return dataSourceBuilder.build();
+	}
+	
+	@Bean
+	public PlatformTransactionManager platformTransactionManager() {
+		return new DataSourceTransactionManager(getDataSource());
 	}
 }

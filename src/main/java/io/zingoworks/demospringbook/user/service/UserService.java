@@ -5,14 +5,12 @@ import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -23,7 +21,7 @@ public class UserService {
 	
 	private UserDao userDao;
 	private UserLevelUpgradePolicy userLevelUpgradePolicy;
-	private DataSource dataSource;
+	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
 	public void setUserDao(UserDao userDao) {
@@ -37,14 +35,12 @@ public class UserService {
 	}
 	
 	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 	
 	public void upgradeLevels() {
-		PlatformTransactionManager transactionManager
-				= new DataSourceTransactionManager(this.dataSource);
-		TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try {
 			List<User> users = userDao.getAll();

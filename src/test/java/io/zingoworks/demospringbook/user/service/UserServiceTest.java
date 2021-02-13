@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +31,7 @@ class UserServiceTest {
 	private UserLevelUpgradePolicy userLevelUpgradePolicy;
 	
 	@Autowired
-	private DataSource dataSource;
+	private PlatformTransactionManager transactionManager;
 	
 	private List<User> users;
 	
@@ -90,7 +90,7 @@ class UserServiceTest {
 		UserService testUserService = new TestUserService(users.get(3).getId());
 		testUserService.setUserDao(this.userDao);
 		testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
-		testUserService.setDataSource(this.dataSource);
+		testUserService.setTransactionManager(this.transactionManager);
 		
 		userDao.deleteAll();
 		for (User user : users) {
