@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +29,9 @@ class UserServiceTest {
 	
 	@Autowired
 	private UserLevelUpgradePolicy userLevelUpgradePolicy;
+	
+	@Autowired
+	private DataSource dataSource;
 	
 	private List<User> users;
 	
@@ -66,7 +70,7 @@ class UserServiceTest {
 	}
 	
 	@Test
-	void upgradeLevels() {
+	void upgradeLevels() throws Exception {
 		userDao.deleteAll();
 		for (User user : users) {
 			userDao.add(user);
@@ -82,10 +86,11 @@ class UserServiceTest {
 	}
 	
 	@Test
-	void upgradeAllOrNothing() {
+	void upgradeAllOrNothing() throws Exception {
 		UserService testUserService = new TestUserService(users.get(3).getId());
 		testUserService.setUserDao(this.userDao);
 		testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
+		testUserService.setDataSource(this.dataSource);
 		
 		userDao.deleteAll();
 		for (User user : users) {
