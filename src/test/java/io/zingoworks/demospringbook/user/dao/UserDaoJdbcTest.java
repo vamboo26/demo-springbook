@@ -1,5 +1,6 @@
 package io.zingoworks.demospringbook.user.dao;
 
+import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,9 +30,9 @@ class UserDaoJdbcTest {
 	
 	@BeforeEach
 	void setUp() {
-		this.user1 = new User("1", "one", "1234");
-		this.user2 = new User("2", "two", "1234");
-		this.user3 = new User("3", "three", "1234");
+		this.user1 = new User("1", "one", "1234", Level.BASIC, 1, 0);
+		this.user2 = new User("2", "two", "1234", Level.SILVER, 55, 10);
+		this.user3 = new User("3", "three", "1234", Level.GOLD, 100, 40);
 	}
 	
 	@Test
@@ -125,5 +126,8 @@ class UserDaoJdbcTest {
 		assertThat(user1.getId()).isEqualTo(user2.getId());
 		assertThat(user1.getName()).isEqualTo(user2.getName());
 		assertThat(user1.getPassword()).isEqualTo(user2.getPassword());
+		assertThat(user1.getLevel()).isEqualTo(user2.getLevel());
+		assertThat(user1.getLoginSequence()).isEqualTo(user2.getLoginSequence());
+		assertThat(user1.getRecommendationCount()).isEqualTo(user2.getRecommendationCount());
 	}
 }

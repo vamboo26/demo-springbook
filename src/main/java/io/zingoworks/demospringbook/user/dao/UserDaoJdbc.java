@@ -1,5 +1,6 @@
 package io.zingoworks.demospringbook.user.dao;
 
+import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,15 @@ public class UserDaoJdbc implements UserDao {
 		user.setId(resultSet.getString("id"));
 		user.setName(resultSet.getString("name"));
 		user.setPassword(resultSet.getString("password"));
+		user.setLevel(Level.findByValue(resultSet.getInt("level")));
+		user.setLoginSequence(resultSet.getInt("login"));
+		user.setRecommendationCount(resultSet.getInt("recommend"));
 		return user;
 	};
 	
 	@Override
 	public void add(User user) {
-		this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)", user.getId(), user.getName(), user.getPassword());
+		this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)", user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLoginSequence(), user.getRecommendationCount());
 	}
 	
 	@Override
