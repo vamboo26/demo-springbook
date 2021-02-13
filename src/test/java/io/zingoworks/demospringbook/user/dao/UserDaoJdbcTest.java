@@ -122,6 +122,27 @@ class UserDaoJdbcTest {
 		checkSameUser(user3, users3.get(2));
 	}
 	
+	@Test
+	void update() {
+		dao.deleteAll();
+		
+		dao.add(user1);
+		dao.add(user2);
+		
+		user1.setName("빠니보틀");
+		user1.setPassword("ppap");
+		user1.setLevel(Level.GOLD);
+		user1.setLoginSequence(1000);
+		user1.setRecommendationCount(999);
+		
+		dao.update(user1);
+		
+		User user1update = dao.get(user1.getId());
+		checkSameUser(user1, user1update);
+		User user2same = dao.get(user2.getId());
+		checkSameUser(user2, user2same);
+	}
+	
 	private void checkSameUser(User user1, User user2) {
 		assertThat(user1.getId()).isEqualTo(user2.getId());
 		assertThat(user1.getName()).isEqualTo(user2.getName());

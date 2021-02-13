@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Setter
-@Component
+@Repository
 public class UserDaoJdbc implements UserDao {
 	
 	@Autowired
@@ -53,5 +54,18 @@ public class UserDaoJdbc implements UserDao {
 	@Override
 	public int getCount() {
 		return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+	}
+	
+	@Override
+	public void update(User user) {
+		this.jdbcTemplate.update(
+				"update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?",
+				user.getName(),
+				user.getPassword(),
+				user.getLevel().getValue(),
+				user.getLoginSequence(),
+				user.getRecommendationCount(),
+				user.getId()
+		);
 	}
 }
