@@ -4,6 +4,7 @@ import io.zingoworks.demospringbook.DemoSpringbookApplication;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ class UserServiceTest {
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private UserLevelUpgradePolicy userLevelUpgradePolicy;
 	
 	private List<User> users;
 	
@@ -75,6 +79,27 @@ class UserServiceTest {
 		checkLevelUpgraded(users.get(2), false);
 		checkLevelUpgraded(users.get(3), true);
 		checkLevelUpgraded(users.get(4), false);
+	}
+	
+	@Test
+	void upgradeAllOrNothing() {
+		UserService testUserService = new TestUserService(users.get(3).getId());
+		testUserService.setUserDao(this.userDao);
+		testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
+		
+		userDao.deleteAll();
+		for (User user : users) {
+			userDao.add(user);
+		}
+		
+		try {
+			testUserService.upgradeLevels();
+			Assertions.fail("TestUserServiceException expected");
+		} catch (TestUserService.TestUserServiceException e) {
+		
+		}
+		
+		checkLevelUpgraded(users.get(1), false);
 	}
 	
 	private void checkLevelUpgraded(User user, boolean upgraded) {

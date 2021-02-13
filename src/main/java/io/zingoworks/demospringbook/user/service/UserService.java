@@ -15,12 +15,19 @@ public class UserService {
 	public static final int MIN_LOGIN_SEQUENCE_FOR_SILVER = 50;
 	public static final int MIN_RECOMMEND_FOR_GOLD = 30;
 	
-	@Autowired
 	private UserDao userDao;
+	private UserLevelUpgradePolicy userLevelUpgradePolicy;
+	
+	@Autowired
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
 	
 	@Autowired
 	@Qualifier(value = "defaultUserLevelUpgradePolicy")
-	private UserLevelUpgradePolicy userLevelUpgradePolicy;
+	public void setUserLevelUpgradePolicy(UserLevelUpgradePolicy userLevelUpgradePolicy) {
+		this.userLevelUpgradePolicy = userLevelUpgradePolicy;
+	}
 	
 	public void upgradeLevels() {
 		List<User> users = userDao.getAll();
@@ -32,7 +39,7 @@ public class UserService {
 		}
 	}
 	
-	private void upgradeLevel(User user) {
+	protected void upgradeLevel(User user) {
 		user.upgradeLevel();
 		userDao.update(user);
 	}
