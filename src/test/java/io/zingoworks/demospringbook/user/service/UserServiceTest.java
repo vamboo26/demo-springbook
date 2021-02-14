@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.MailSender;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
@@ -74,7 +75,25 @@ class UserServiceTest {
 		assertThat(userWithGoldLevelRead.getLevel()).isEqualTo(userWithGoldLevel.getLevel());
 		assertThat(userWithoutLevelRead.getLevel()).isEqualTo(userWithoutLevel.getLevel());
 	}
+
+//	@Test
+//	void upgradeLevels() {
+//		userDao.deleteAll();
+//		for (User user : users) {
+//			userDao.add(user);
+//		}
+//
+//		userService.setMailSender(this.mailSender);
+//		userService.upgradeLevels();
+//
+//		checkLevelUpgraded(users.get(0), false);
+//		checkLevelUpgraded(users.get(1), true);
+//		checkLevelUpgraded(users.get(2), false);
+//		checkLevelUpgraded(users.get(3), true);
+//		checkLevelUpgraded(users.get(4), false);
+//	}
 	
+	@DirtiesContext
 	@Test
 	void upgradeLevels() {
 		userDao.deleteAll();
@@ -82,7 +101,9 @@ class UserServiceTest {
 			userDao.add(user);
 		}
 		
-		userService.setMailSender(this.mailSender);
+		MockMailSender mockMailSender = new MockMailSender();
+		userService.setMailSender(mockMailSender);
+		
 		userService.upgradeLevels();
 		
 		checkLevelUpgraded(users.get(0), false);
@@ -90,6 +111,11 @@ class UserServiceTest {
 		checkLevelUpgraded(users.get(2), false);
 		checkLevelUpgraded(users.get(3), true);
 		checkLevelUpgraded(users.get(4), false);
+		
+		List<String> requests = mockMailSender.getRequests();
+		assertThat(requests.size()).isEqualTo(2);
+		assertThat(requests.get(0)).isEqualTo(users.get(1).getName());
+		assertThat(requests.get(1)).isEqualTo(users.get(3).getName());
 	}
 	
 	@Test
