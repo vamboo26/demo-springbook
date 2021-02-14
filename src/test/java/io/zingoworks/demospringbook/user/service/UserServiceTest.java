@@ -4,6 +4,7 @@ import io.zingoworks.demospringbook.DemoSpringbookApplication;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,7 +135,7 @@ class UserServiceTest {
 		try {
 			testUserService.upgradeLevels();
 			Assertions.fail("TestUserServiceException expected");
-		} catch (TestUserService.TestUserServiceException e) {
+		} catch (TestUserServiceException e) {
 		
 		}
 		
@@ -149,5 +150,23 @@ class UserServiceTest {
 		} else {
 			assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel());
 		}
+	}
+	
+	@AllArgsConstructor
+	static class TestUserService extends UserService {
+		
+		private String id;
+		
+		@Override
+		protected void upgradeLevel(User user) {
+			if (user.getId().equals(this.id)) {
+				throw new TestUserServiceException();
+			}
+			super.upgradeLevel(user);
+		}
+	}
+	
+	static class TestUserServiceException extends RuntimeException {
+	
 	}
 }
