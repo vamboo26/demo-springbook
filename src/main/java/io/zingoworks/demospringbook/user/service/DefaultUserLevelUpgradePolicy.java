@@ -13,9 +13,9 @@ public class DefaultUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
 		
 		switch (currentLevel) {
 			case BASIC:
-				return user.getLoginSequence() >= UserService.MIN_LOGIN_SEQUENCE_FOR_SILVER;
+				return user.getLoginSequence() >= UserServiceImpl.MIN_LOGIN_SEQUENCE_FOR_SILVER;
 			case SILVER:
-				return user.getRecommendationCount() >= UserService.MIN_RECOMMEND_FOR_GOLD;
+				return user.getRecommendationCount() >= UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 			case GOLD:
 				return false;
 			default:

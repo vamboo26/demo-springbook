@@ -13,13 +13,22 @@
     - 비즈니스 로직 코드를 분리해본다
 ### 6.1.2 DI를 이용한 클래스의 분리
 #### DI 적용을 이용한 트랜잭션 분리
+- UserService 구현 클래스를 직접 사용하는 구조를 탈피하자
+  - UserSerivce 인퍼테이스를 구현한 UserServiceImpl
+  - UserSerivce 인터페이스를 구현한 UserSerivceTx
 #### UserService 인터페이스 도입
 #### 분리된 트랜잭션 기능
 #### 트랜잭션 적용을 위한 DI 설정
+1. UserServiceImpl.upgradeLevels() 에서 트랜잭션 경계설정 코드를 삭제
+2. UserServiceTx.upgradeLevels() 에서 트랜잭션 경계설정의 역할을 수행하며,  
+실제 upgradeLevels() 로직은 DI로 주입받은 userService 에서 수행한다.
+3. 이제 클라이언트는 UserServiceImpl을 주입받은 UserServiceTx를 사용한다.
 #### 트랜잭션 분리에 따른 테스트 수정
 #### 트랜잭션 경계설정 코드 분리의 장점
+- 비즈니스 로직을 담당하는 구현클래스와 트랜잭션을 담당하는 클래스가 분리
 
 ## 6.2 고립된 단위 테스트
+- 작은 테스트는 실패의 원인을 찾기가 쉽다
 ### 6.2.1 복잡한 의존관계 속의 테스트
 ### 6.2.2 테스트 대상 오브젝트 고립시키기
 #### 테스트를 위한 UserServiceImpl 고립
