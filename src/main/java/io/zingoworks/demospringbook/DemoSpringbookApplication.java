@@ -1,5 +1,6 @@
 package io.zingoworks.demospringbook;
 
+import io.zingoworks.demospringbook.core.CoreService;
 import io.zingoworks.demospringbook.hello.message.MessageFactoryBean;
 import io.zingoworks.demospringbook.user.service.TxProxyFactoryBean;
 import io.zingoworks.demospringbook.user.service.UserService;
@@ -46,6 +47,15 @@ public class DemoSpringbookApplication {
         txProxyFactoryBean.setTransactionManager(this.platformTransactionManager());
         txProxyFactoryBean.setPattern("upgradeLevels");
         txProxyFactoryBean.setServiceInterface(UserService.class);
+        return txProxyFactoryBean;
+    }
+
+    @Bean
+    public TxProxyFactoryBean coreService() {
+        TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
+        txProxyFactoryBean.setTransactionManager(this.platformTransactionManager());
+        txProxyFactoryBean.setPattern("");
+        txProxyFactoryBean.setServiceInterface(CoreService.class);
         return txProxyFactoryBean;
     }
 }
