@@ -1,6 +1,8 @@
 package io.zingoworks.demospringbook;
 
 import io.zingoworks.demospringbook.hello.message.MessageFactoryBean;
+import io.zingoworks.demospringbook.user.service.TxProxyFactoryBean;
+import io.zingoworks.demospringbook.user.service.UserService;
 import javax.sql.DataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -36,5 +38,14 @@ public class DemoSpringbookApplication {
         MessageFactoryBean messageFactoryBean = new MessageFactoryBean();
         messageFactoryBean.setText("Factory Bean");
         return messageFactoryBean;
+    }
+
+    @Bean
+    public TxProxyFactoryBean userService() {
+        TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
+        txProxyFactoryBean.setTransactionManager(this.platformTransactionManager());
+        txProxyFactoryBean.setPattern("upgradeLevels");
+        txProxyFactoryBean.setServiceInterface(UserService.class);
+        return txProxyFactoryBean;
     }
 }
