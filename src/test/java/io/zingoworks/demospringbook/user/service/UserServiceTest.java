@@ -6,6 +6,7 @@ import io.zingoworks.demospringbook.DemoSpringbookApplication;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -140,6 +141,32 @@ class UserServiceTest {
         assertThat(users.get(3).getLevel()).isEqualTo(Level.GOLD);
     }
 
+//    @Test
+//    void upgradeAllOrNothing() {
+//        TestUserService testUserService = new TestUserService(users.get(3).getId());
+//        testUserService.setUserDao(this.userDao);
+//        testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
+//        testUserService.setMailSender(this.mailSender);
+//
+//        UserServiceTx txUserService = new UserServiceTx();
+//        txUserService.setTransactionManager(transactionManager);
+//        txUserService.setUserService(testUserService);
+//
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        try {
+//            txUserService.upgradeLevels();
+//            Assertions.fail("TestUserServiceException expected");
+//        } catch (TestUserServiceException e) {
+//
+//        }
+//
+//        checkLevelUpgraded(users.get(1), false);
+//    }
+
     @Test
     void upgradeAllOrNothing() {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
@@ -147,9 +174,16 @@ class UserServiceTest {
         testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
         testUserService.setMailSender(this.mailSender);
 
-        UserServiceTx txUserService = new UserServiceTx();
-        txUserService.setTransactionManager(transactionManager);
-        txUserService.setUserService(testUserService);
+        TransactionHandler txHandler = new TransactionHandler();
+        txHandler.setTarget(testUserService);
+        txHandler.setTransactionManager(transactionManager);
+        txHandler.setPattern("upgradeLevels");
+
+        UserService txUserService = (UserService) Proxy.newProxyInstance(
+            getClass().getClassLoader(),
+            new Class[]{UserService.class},
+            txHandler
+        );
 
         userDao.deleteAll();
         for (User user : users) {
