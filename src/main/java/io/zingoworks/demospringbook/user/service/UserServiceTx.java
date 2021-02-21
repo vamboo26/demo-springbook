@@ -27,17 +27,17 @@ public class UserServiceTx implements UserService {
 
     @Override
     public void add(User user) {
-        userService.add(user);
+        this.userService.add(user);
     }
 
     @Override
     public void upgradeLevels() {
         TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
-            userService.upgradeLevels();
-            transactionManager.commit(status);
+            this.userService.upgradeLevels();
+            this.transactionManager.commit(status);
         } catch (Exception e) {
-            transactionManager.rollback(status);
+            this.transactionManager.rollback(status);
             throw e;
         }
     }
