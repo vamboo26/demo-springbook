@@ -6,7 +6,6 @@ import io.zingoworks.demospringbook.DemoSpringbookApplication;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -204,6 +204,37 @@ class UserServiceTest {
 //        checkLevelUpgraded(users.get(1), false);
 //    }
 
+//    @DirtiesContext
+//    @Test
+//    void upgradeAllOrNothing() throws Exception {
+//        TestUserService testUserService = new TestUserService(users.get(3).getId());
+//        testUserService.setUserDao(this.userDao);
+//        testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
+//        testUserService.setMailSender(this.mailSender);
+//
+//        TxProxyFactoryBean txProxyFactoryBean = context.getBean(
+//            "&userService",
+//            TxProxyFactoryBean.class
+//        );
+//
+//        txProxyFactoryBean.setTarget(testUserService);
+//        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
+//
+//        userDao.deleteAll();
+//        for (User user : users) {
+//            userDao.add(user);
+//        }
+//
+//        try {
+//            txUserService.upgradeLevels();
+//            Assertions.fail("TestUserServiceException expected");
+//        } catch (TestUserServiceException e) {
+//
+//        }
+//
+//        checkLevelUpgraded(users.get(1), false);
+//    }
+
     @DirtiesContext
     @Test
     void upgradeAllOrNothing() throws Exception {
@@ -212,9 +243,9 @@ class UserServiceTest {
         testUserService.setUserLevelUpgradePolicy(this.userLevelUpgradePolicy);
         testUserService.setMailSender(this.mailSender);
 
-        TxProxyFactoryBean txProxyFactoryBean = context.getBean(
+        ProxyFactoryBean txProxyFactoryBean = context.getBean(
             "&userService",
-            TxProxyFactoryBean.class
+            ProxyFactoryBean.class
         );
 
         txProxyFactoryBean.setTarget(testUserService);
