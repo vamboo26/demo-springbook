@@ -10,7 +10,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service(value = "userService")
 public class UserServiceImpl implements UserService {
 
     public static final int MIN_LOGIN_SEQUENCE_FOR_SILVER = 50;
