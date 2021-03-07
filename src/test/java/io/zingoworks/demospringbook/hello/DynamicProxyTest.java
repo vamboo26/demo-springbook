@@ -9,6 +9,7 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
+import org.springframework.cglib.proxy.Enhancer;
 
 class DynamicProxyTest {
 
@@ -37,6 +38,8 @@ class DynamicProxyTest {
             new Class[]{Hello.class},
             new UppercaseHandler(new HelloTarget())
         );
+    
+        System.out.println("proxiedHello.getClass() = " + proxiedHello.getClass());
 
         assertThat(proxiedHello.sayHello("Bob")).isEqualTo("HELLO BOB");
         assertThat(proxiedHello.sayHi("Bob")).isEqualTo("HI BOB");
@@ -50,12 +53,25 @@ class DynamicProxyTest {
         pfBean.addAdvice(new UpperCaseAdvice());
 
         Hello proxiedHello = (Hello) pfBean.getObject();
-
+    
+        System.out.println("proxiedHello.getClass() = " + proxiedHello.getClass());
+    
+    
         assertThat(proxiedHello.sayHello("Bob")).isEqualTo("HELLO BOB");
         assertThat(proxiedHello.sayHi("Bob")).isEqualTo("HI BOB");
         assertThat(proxiedHello.sayThankYou("Bob")).isEqualTo("THANK YOU BOB");
     }
-
+    
+    @Test
+    void cglib() {
+        ProxyFactoryBean pfBean = new ProxyFactoryBean();
+        pfBean.setTarget(new HelloWithoutInterface());
+    
+        HelloWithoutInterface proxied = (HelloWithoutInterface) pfBean.getObject();
+    
+        System.out.println("proxied.getClass() = " + proxied.getClass());
+    }
+    
     @Test
     void pointcutAdvisor() {
         ProxyFactoryBean pfBean = new ProxyFactoryBean();

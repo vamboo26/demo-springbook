@@ -1,4 +1,4 @@
-### Week7 2021-03-07
+### Week8 2021-03-07
 
 463 ~ 555p
 
@@ -13,7 +13,7 @@
         - `MethodInterceptor`의 `invoke()`는 타깃 오브젝트를 주입받기에 구체적인 타깃에 상관없이 독립적
 
 ```java
-# JDK dynamicProxy
+// JDK dynamicProxy
 @Test
 void dynamicProxy() {
     Hello proxiedHello = (Hello) Proxy.newProxyInstance(
@@ -28,7 +28,7 @@ void dynamicProxy() {
 }
 ```
 ```java
-# 스프링의 ProxyFactoryBean 이용
+// 스프링의 ProxyFactoryBean 이용
 @Test
 void proxyFactoryBean() {
     ProxyFactoryBean pfBean = new ProxyFactoryBean();
@@ -310,15 +310,41 @@ public AspectJExpressionPointcut transactionPointcut() {
 
 ### 6.5.4 AOP란 무엇인가?
 #### 트랜잭션 서비스 추상화
+- 인터페이스와 DI를 통해 무엇을 하는지는 남기고
+- 어떻게 하는지는 분리한다
+    - 어떻게 하는지는 비즈니스 로직으로부터 독립
 #### 프록시와 데코레이터 패턴
+- 무엇을 하는지는 남아있음
+    - DI를 이용해 데코레이터 패턴 적용
+        - 투명한 부가기능 부여
+        - 프록시 역할의 트랜잭션 데코레이터를 거쳐 타깃에 접근
+            - 타깃에는 트랜잭션 관련 코드가 남지 않음
 #### 다이내믹 프록시와 프록시 팩토리 빈
+- 트랜잭션 필요 메소드마다 프록시 클래스 구현이 필요
+    - 런타임 시 자동생성해주는 JDK 다이내믹 프록시 기술 적용
+        - 오브젝트 단위의 중복은 여전히 문제
+            - 프록시 기술을 추상화한 스프링의 프록시 팩토리 빈을 이용, DI 도입
+                - 어드바이스와 포인트컷의 재사용
 #### 자동 프록시 생성 방법과 포인트컷
+- 트랜잭션 적용 대상 빈에 일일히 프록시 팩토리 빈 설정 필요
+    - 빈 생성 후처리 기법으로 자동화
+        - 포인트컷 표현식으로 설정 자동화
 #### 부가기능의 모듈화
+- 다양한 기법으로 `TransactionAdvice` 이름으로 모듈화
+    - 재사용 가능, 변경의 집중
 #### AOP: 애스펙트 지향 프로그래밍
+- 에스펙트 : 부가기능 어드바이스 + 적용대상 포인트컷
+    - 어드바이저는 단순한 형태의 에스펙트라고 볼 수 있음
+- 핵심로직의 개발, 부가기능의 개발이 분리
 
 ### 6.5.5 AOP 적용기술
 #### 프록시를 이용한 AOP
 #### 바이트코드 생성과 조작을 통한 AOP
+- AspectJ 와 같은 AOP 프레임워크는 프록시를 사용하지 않고 바이트코드 조작
+    - 컴파일된 타깃 클래스 파일 자체를 수정
+    - 클래스가 JVM에 로딩되는 시점에 가로채서 바이트코드 조작
+        - 장점1. 스프링의 DI 컨테이너의 도움을 받지 않아도 AOP 적용 가능
+        - 장점2. 강력하고 유연함, 적용가능한 대상과 시점이 넓어짐
 
 ### 6.5.6 AOP의 용어
 - 타깃
@@ -512,7 +538,7 @@ public interface TransactionDefinition {
     4. 선언 타입(클래스, 인터페이스)
 
 ```java
-[우선순위, 낮을수록]
+[우선순위]
 
 [4]
 public interface Service {
