@@ -1,9 +1,7 @@
 package io.zingoworks.demospringbook;
 
 import io.zingoworks.demospringbook.core.CoreService;
-import io.zingoworks.demospringbook.hello.NameMatchClassMethodPointcut;
 import io.zingoworks.demospringbook.hello.message.MessageFactoryBean;
-import io.zingoworks.demospringbook.user.service.TestUserServiceImpl;
 import io.zingoworks.demospringbook.user.service.TransactionAdvice;
 import io.zingoworks.demospringbook.user.service.TxProxyFactoryBean;
 import javax.sql.DataSource;
@@ -69,7 +67,7 @@ public class DemoSpringbookApplication {
     @Bean
     public AspectJExpressionPointcut transactionPointcut() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
+        pointcut.setExpression("bean(*Service)");
         return pointcut;
     }
 

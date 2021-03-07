@@ -277,7 +277,7 @@ beanClass = class io.zingoworks.demospringbook.user.service.JavaMailSenderImpl
 beanName = javaMailSenderImpl
 super.findEligibleAdvisors(beanClass, beanName); = []
 ============================
-beanClass = class io.zingoworks.demospringbook.user.service.TestUserServiceImpl
+beanClass = class io.zingoworks.demospringbook.user.service.TestUserService
 beanName = testUserService
 super.findEligibleAdvisors(beanClass, beanName); = [org.springframework.aop.support.DefaultPointcutAdvisor: pointcut [io.zingoworks.demospringbook.hello.NameMatchClassMethodPointcut: [upgrade*]]; advice [io.zingoworks.demospringbook.user.service.TransactionAdvice@ca66933]]
 ============================
@@ -441,17 +441,35 @@ public interface TransactionDefinition {
 
 ### 6.6.2 트랜잭션 인터셉터와 트랜잭션 속성
 - 메소드별로 다른 트랜잭션 정의를 사용하려면 어드바이스의 기능을 확장
-
 #### TransactionInterceptor
+- 트랜잭션 정의를 통한 네가지 조건 + 롤백 대상 예외 종료  
+  -> 합쳐서 `TransactionAttribute` 속성 
+#### 메소드 이름 패턴을 이용한 트랜잭션 속성 지정
+- PROPAGATION_NAME (required)
+- ISOLATION_NAME
+- readOnly
+- timeout_NNNN
+- -Exception1 (rollback)
+- +Exception2 (commit)
 
+#### tx 네임스페이스를 이용한 설정 방법
 
+### 6.6.3 포인트컷과 트랜잭션 속성의 적용 전략
 
-
-
-
-
-
+#### 트랜잭션 포인트컷 표현식은 타입 패턴이나 빈 이름을 이용한다
+- 조회는 읽기전용으로 설정하면 성능 향상을 가져올 수도 있다
+- 복잡한 조회는 제한시간 지정 가능
+- 포인트컷 표현식 대신 스프링의 bean() 표현식도 가능
+    - bean(*Service) 형태
+#### 공통된 메소드 이름 규칙을 통해 최소한의 트랜잭션 어드바이스와 속성을 정의한다
+- 가장 단순한 디폴트 속성으로 전역설정 후에 추가적인 속성을 더해나가는 것이 좋다
 #### 프록시 방식 AOP는 같은 타깃 오브젝트 내의 메소드를 호출할 때는 적용되지 않는다
+- 프록시를 통한 부가기능 적용은 클라이언트로부터 호출이 일어날 때만 가능
+- 타깃 오브젝트가 자기 자신의 메소드를 호출할 때는 일어나지 않음
+- 복잡한 트랜잭션 속성 설정 시에, 예상과 달리 무시되는 경우를 주의해야 함
+- 타깃 안에서의 호출에 프록시를 적용하는 법
+    1. 스프링 API를 통해 프록시 사용을 강제하는 방법
+    2. AspectJ와 같이 바이트코드를 조작하여 AOP 적용
 
 ### 6.6.4 트랜잭션 속성 적용
 #### 트랜잭션 경계설정의 일원화
@@ -469,6 +487,7 @@ public interface TransactionDefinition {
 - `TransientDataAccessResourceException`
     - `DataAccessException`의 한 종류로 일시적인 예외상황(재시도 시 성공 가능성 존재)
         - 쓰기작업에 읽기전용 트랜잭션이 걸려있어서 실패
+- 이거 구현이 안되넹❓❓❓
 
 ## 6.7 애노테이션 트랜잭션 속성과 포인트컷
 - 기본적으로 일괄적인 적용
@@ -479,7 +498,7 @@ public interface TransactionDefinition {
 
 #### @Transactional
 - 타깃 : 메소드, 타입
-    - `TransactionAttributeSourcePointcut)
+    - `TransactionAttributeSourcePointcut`
 
 #### 트랜잭션 속성을 이용하는 포인트컷
 - `TransactionInterceptor`
@@ -512,6 +531,11 @@ public class ServiceImpl implements Service {
 }
 ```
 
+- 기본적으로 @Transactional 적용 대상은 클라이언트가 사용하는 인터페이스로 애노테이션도 인터페이스에 두는 게 바람직
+    - 하지만 인터페이스를 사용하는 프록시 방식의 AOP가 아닌 경우 무시됨❓❓❓
+    - 따라서 안전하게 타깃 클래스에 두는 것을 권장
+        - 프록시 방식 AOP 종류와 특징, 비 프록시 방식 AOP 동작원리를 잘 이해한다면 인터페이스에 적용 가능
+
 #### 트랜잭션 애노테이션 사용을 위한 설정
 - xml 설정
 
@@ -532,3 +556,15 @@ public class ServiceImpl implements Service {
         - 데이터 액세스 기술의 종류에 상관없이 일관된 트랜잭션 제어
     - 트랜잭션 동기화
         - 트랜잭션 전파라는 개념을 가능케함
+
+#### 트랜잭션 매니저를 이용한 테스트용 트랜잭션 제어
+#### 트랜잭션 동기화 검증
+#### 롤백 테스트
+
+### 6.8.3 테스트를 위한 트랜잭션 애노테이션
+#### @Transactional
+#### @Rollback
+#### @TransactionConfiguration
+#### NotTransactional 과 Propagation.NEVER
+#### 효과적인 DB 테스트
+
