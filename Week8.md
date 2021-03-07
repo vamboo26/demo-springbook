@@ -339,3 +339,196 @@ public AspectJExpressionPointcut transactionPointcut() {
 #### 어드바이저 내장 포인트컷
 
 ---
+
+## 6.6 트랜잭션 속성
+- `DefaultTransactionDefinition`의 용도는 무엇일까?
+### 6.6.1 트랜잭션 정의
+- `DefaultTransactionDefinition`이 구현하고 있는 `TransactionDefinition`인터페이스는 트랜잭션의 동작방식에 영향을 주는 네 가지 속성을 정의
+```java
+public class DefaultTransactionDefinition implements TransactionDefinition, Serializable {
+```
+```java
+package org.springframework.transaction;
+
+import org.springframework.lang.Nullable;
+
+public interface TransactionDefinition {
+    int PROPAGATION_REQUIRED = 0;
+    int PROPAGATION_SUPPORTS = 1;
+    int PROPAGATION_MANDATORY = 2;
+    int PROPAGATION_REQUIRES_NEW = 3;
+    int PROPAGATION_NOT_SUPPORTED = 4;
+    int PROPAGATION_NEVER = 5;
+    int PROPAGATION_NESTED = 6;
+    int ISOLATION_DEFAULT = -1;
+    int ISOLATION_READ_UNCOMMITTED = 1;
+    int ISOLATION_READ_COMMITTED = 2;
+    int ISOLATION_REPEATABLE_READ = 4;
+    int ISOLATION_SERIALIZABLE = 8;
+    int TIMEOUT_DEFAULT = -1;
+
+    default int getPropagationBehavior() {
+        return 0;
+    }
+
+    default int getIsolationLevel() {
+        return -1;
+    }
+
+    default int getTimeout() {
+        return -1;
+    }
+
+    default boolean isReadOnly() {
+        return false;
+    }
+
+    @Nullable
+    default String getName() {
+        return null;
+    }
+
+    static TransactionDefinition withDefaults() {
+        return StaticTransactionDefinition.INSTANCE;
+    }
+}
+```
+#### 트랜잭션 전파
+- 경계에서 진행 중인 트랜잭션의 유무에 따라 어떻게 동작할 것인가를 결정
+- PROPAGATION_REQUIRED
+    - 있으면 참여하고, 없으면 새로 시작
+- PROPAGATION_REQUIRES_NEW
+    - 항상 새로 시작
+- PROPAGATION_NOT_SUPPORTED
+    - 트랜잭션 없이 동작
+- ...
+- 트랜잭션 매니저에서 `getTransaction()`을 사용하는 이유도 전파 속성에 따라 항상 새로운 트랜잭션을 시작하지 않기 때문
+
+#### 격리수준
+- 모든 DB 트랜잭션은 격리수준을 갖고 있어야 한다.
+- 동시에 많은 트랜잭션을 진행시키면서도 문제 없도록 제어하기 위함
+- DB
+    - JDBC 드라이버, DataSource 설정
+        - 트랜잭션 단위 조정
+- `DefaultTransactionDefinition`의 기본 수준은 `ISOLATION_DEFAULT`
+```java
+public class DefaultTransactionDefinition implements TransactionDefinition, Serializable {
+    public static final String PREFIX_PROPAGATION = "PROPAGATION_";
+    public static final String PREFIX_ISOLATION = "ISOLATION_";
+    public static final String PREFIX_TIMEOUT = "timeout_";
+    public static final String READ_ONLY_MARKER = "readOnly";
+    static final Constants constants = new Constants(TransactionDefinition.class);
+    private int propagationBehavior = 0;
+    private int isolationLevel = -1;
+	
+public interface TransactionDefinition {
+    int PROPAGATION_REQUIRED = 0;
+    int PROPAGATION_SUPPORTS = 1;
+    int PROPAGATION_MANDATORY = 2;
+    int PROPAGATION_REQUIRES_NEW = 3;
+    int PROPAGATION_NOT_SUPPORTED = 4;
+    int PROPAGATION_NEVER = 5;
+    int PROPAGATION_NESTED = 6;
+    int ISOLATION_DEFAULT = -1; # DefaultTransactionDefinition default
+```
+
+#### 제한시간
+- 트랜잭션 수행의 제한시간을 설정
+    - 트랜잭션을 직접 시작하는 전파속성일 경우에만 유효
+#### 읽기전용
+- 트랜잭션 내에서 데이터 조작하는 시도를 막아줌
+    - \+ 성능 향상의 여지 존재
+
+### 6.6.2 트랜잭션 인터셉터와 트랜잭션 속성
+- 메소드별로 다른 트랜잭션 정의를 사용하려면 어드바이스의 기능을 확장
+
+#### TransactionInterceptor
+
+
+
+
+
+
+
+
+#### 프록시 방식 AOP는 같은 타깃 오브젝트 내의 메소드를 호출할 때는 적용되지 않는다
+
+### 6.6.4 트랜잭션 속성 적용
+#### 트랜잭션 경계설정의 일원화
+- 경계설정의 부가기능을 여러 계층에서 적용하는 건 좋지 않다
+    - 특정 계층을 트랜잭션 경계로 정했다면, 다른 계층에서 DAO에 직접 접근하지 않도록 해야한다
+
+#### 서비스 빈에 적용되는 포인트컷 표현식 등록
+- xml 코드
+
+#### 트랜잭션 속성을 가진 트랜잭션 어드바이스 등록
+- xml 코드
+
+#### 트랜잭션 속성 테스트
+- 학습테스트 작성
+- `TransientDataAccessResourceException`
+    - `DataAccessException`의 한 종류로 일시적인 예외상황(재시도 시 성공 가능성 존재)
+        - 쓰기작업에 읽기전용 트랜잭션이 걸려있어서 실패
+
+## 6.7 애노테이션 트랜잭션 속성과 포인트컷
+- 기본적으로 일괄적인 적용
+    - 클래스/메소드에 따라 적용이 필요한 경우도 있다
+        - 직접 타깃에 애노테이션을 통해 트랜잭션 속성 부여
+
+### 6.7.1 트랜잭션 애노테이션
+
+#### @Transactional
+- 타깃 : 메소드, 타입
+    - `TransactionAttributeSourcePointcut)
+
+#### 트랜잭션 속성을 이용하는 포인트컷
+- `TransactionInterceptor`
+- `AnnotationTransactionAttributeSource`
+
+#### 대체 정책(fallback)
+- 메소드 적용 우선순위
+    1. 타깃 메소드
+    2. 타깃 클래스
+    3. 선언 메소드
+    4. 선언 타입(클래스, 인터페이스)
+
+```java
+[우선순위, 낮을수록]
+
+[4]
+public interface Service {
+	[3]
+	void method1();
+	[3]
+	void method2();
+}
+
+[2]
+public class ServiceImpl implements Service {
+	[1]
+	public void method1() {};
+	[1]
+	public void method2() {};
+}
+```
+
+#### 트랜잭션 애노테이션 사용을 위한 설정
+- xml 설정
+
+### 6.7.2 트랜잭션 애노테이션 적용
+
+## 6.8 트랜잭션 지원 테스트
+### 6.8.1 선언적 트랜잭션과 트랜잭션 전파 속성
+- AOP를 이용해 코드 외부에서 트랜잭션 기능을 부여해주고 속성을 지정 : 선언적 트랜잭션
+- `TransactionTemplate`이나 개별 데이터 기술의 트랜잭션 API를 통해 직접 코드 안에서 사용하는 방법 : 프로그램에 의한 트랜잭션
+
+### 6.8.2 트랜잭션 동기화와 테스트
+- AOP 덕분에 프록시를 이용한 트랜잭션 부가기능 적용
+    - 추상화 덕분에 데이터 액세스 기술과 상관없이 AOP를 통한 선언택 트랜잭션, 트랜잭션 전파 가능
+
+#### 트랜잭션 매니저와 트랜잭션 동기화
+- 트랜잭션 추상화 기술의 핵심
+    - 트랜잭션 매니저
+        - 데이터 액세스 기술의 종류에 상관없이 일관된 트랜잭션 제어
+    - 트랜잭션 동기화
+        - 트랜잭션 전파라는 개념을 가능케함
