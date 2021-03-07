@@ -3,9 +3,12 @@ package io.zingoworks.demospringbook;
 import io.zingoworks.demospringbook.core.CoreService;
 import io.zingoworks.demospringbook.hello.NameMatchClassMethodPointcut;
 import io.zingoworks.demospringbook.hello.message.MessageFactoryBean;
+import io.zingoworks.demospringbook.user.service.TestUserServiceImpl;
 import io.zingoworks.demospringbook.user.service.TransactionAdvice;
 import io.zingoworks.demospringbook.user.service.TxProxyFactoryBean;
 import javax.sql.DataSource;
+
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.boot.SpringApplication;
@@ -53,20 +56,28 @@ public class DemoSpringbookApplication {
         return txProxyFactoryBean;
     }
 
+//    @Bean
+//    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+//        return new DefaultAdvisorAutoProxyCreator();
+//    }
+    
     @Bean
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        return new DefaultAdvisorAutoProxyCreator();
+    public DefaultAdvisorAutoProxyCreator myDefaultAdvisorAutoProxyCreator() {
+        return new MyDefaultAdvisorAutoProxyCreator();
+    }
+    
+    @Bean
+    public AspectJExpressionPointcut transactionPointcut() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
+        return pointcut;
     }
 
     @Bean
     public DefaultPointcutAdvisor transactionAdvisor() {
-        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
-        pointcut.setMappedClassName("*ServiceImpl");
-        pointcut.setMappedName("upgrade*");
-
         TransactionAdvice advice = new TransactionAdvice();
         advice.setTransactionManager(platformTransactionManager());
 
-        return new DefaultPointcutAdvisor(pointcut, advice);
+        return new DefaultPointcutAdvisor(transactionPointcut(), advice);
     }
 }
