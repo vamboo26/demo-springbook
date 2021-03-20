@@ -455,7 +455,7 @@ public interface TransactionDefinition {
     int PROPAGATION_NOT_SUPPORTED = 4;
     int PROPAGATION_NEVER = 5;
     int PROPAGATION_NESTED = 6;
-    int ISOLATION_DEFAULT = -1; # DefaultTransactionDefinition default
+    int ISOLATION_DEFAULT = -1; // DefaultTransactionDefinition default
 ```
 
 #### 제한시간
@@ -594,3 +594,6 @@ public class ServiceImpl implements Service {
 #### NotTransactional 과 Propagation.NEVER
 #### 효과적인 DB 테스트
 
+---
+테스트에 빈 설정해도 컴포넌트 스캔하는지?
+상속,확장한거까지 포인트컷 표현에서 다 잡아가는지?
