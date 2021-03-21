@@ -35,7 +35,7 @@ public class EmbeddedDbTest {
 
     @Test
     void initData() {
-        assertThat(template.queryForInt("select count(*) from sqlmap")).isEqualTo(2);
+        assertThat(template.queryForInt("select count(*) from sqlmap")).isEqualTo(3);
 
         List<Map<String, Object>> list = template.queryForList("select * from sqlmap order by key_");
 
@@ -47,8 +47,8 @@ public class EmbeddedDbTest {
 
     @Test
     void insert() {
-        template.update("insert into sqlmap(key_, sql_) values (?, ?)", "KEY3", "SQL3");
+        template.update("insert into sqlmap(key_, sql_) values (?, ?)", "KEY4", "SQL4");
 
-        assertThat(template.queryForInt("select count(*) from sqlmap")).isEqualTo(3);
+        assertThat(template.queryForInt("select count(*) from sqlmap")).isEqualTo(4);
     }
 }
