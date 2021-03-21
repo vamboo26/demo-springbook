@@ -2,13 +2,12 @@ package io.zingoworks.demospringbook.learningtest.embeddeddb;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.zingoworks.demospringbook.sql.SimpleJdbcTemplate;
 import java.util.List;
 import java.util.Map;
-import javax.sql.DataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -52,16 +51,4 @@ public class EmbeddedDbTest {
 
         assertThat(template.queryForInt("select count(*) from sqlmap")).isEqualTo(3);
     }
-
-    private static class SimpleJdbcTemplate extends JdbcTemplate {
-
-        public SimpleJdbcTemplate(DataSource dataSource) {
-            super(dataSource);
-        }
-
-        public int queryForInt(String sql) {
-            return queryForObject(sql, Integer.class);
-        }
-    }
-
 }
