@@ -1,10 +1,15 @@
 package io.zingoworks.demospringbook.user.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import io.zingoworks.demospringbook.DemoSpringbookApplication;
 import io.zingoworks.demospringbook.user.dao.UserDao;
 import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
 import io.zingoworks.demospringbook.user.service.TestUserService.TestUserServiceException;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,68 +17,63 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = DemoSpringbookApplication.class)
 class UserServiceTest {
-	
-	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private UserService testUserService;
-	
-	@Autowired
-	private UserDao userDao;
-	
-	@Autowired
-	private PlatformTransactionManager transactionManager;
-	
-	private List<User> users;
-	
-	@BeforeEach
-	void setUp() {
-		users = Arrays.asList(
-				new User("a", "에이", "p1", Level.BASIC, UserServiceImpl.MIN_LOGIN_SEQUENCE_FOR_SILVER - 1, 0),
-				new User("b", "비", "p2", Level.BASIC, UserServiceImpl.MIN_LOGIN_SEQUENCE_FOR_SILVER, 0),
-				new User("c", "시", "p3", Level.SILVER, 60, UserServiceImpl.MIN_RECOMMEND_FOR_GOLD - 1),
-				new User("d", "디", "p4", Level.SILVER, 60, UserServiceImpl.MIN_RECOMMEND_FOR_GOLD),
-				new User("e", "이", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
-		);
-	}
-	
-	@Test
-	void bean() {
-		assertThat(this.userService).isNotNull();
-	}
-	
-	@Test
-	void add() {
-		userDao.deleteAll();
-		
-		User userWithGoldLevel = users.get(4);
-		User userWithoutLevel = users.get(0);
-		userWithoutLevel.setLevel(null);
-		
-		userService.add(userWithGoldLevel);
-		userService.add(userWithoutLevel);
-		
-		User userWithGoldLevelRead = userDao.get(userWithGoldLevel.getId());
-		User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
-		
-		assertThat(userWithGoldLevelRead.getLevel()).isEqualTo(userWithGoldLevel.getLevel());
-		assertThat(userWithoutLevelRead.getLevel()).isEqualTo(userWithoutLevel.getLevel());
-	}
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserService testUserService;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    private List<User> users;
+
+    @BeforeEach
+    void setUp() {
+        users = Arrays.asList(
+            new User("a", "에이", "p1", Level.BASIC, UserServiceImpl.MIN_LOGIN_SEQUENCE_FOR_SILVER - 1, 0),
+            new User("b", "비", "p2", Level.BASIC, UserServiceImpl.MIN_LOGIN_SEQUENCE_FOR_SILVER, 0),
+            new User("c", "시", "p3", Level.SILVER, 60, UserServiceImpl.MIN_RECOMMEND_FOR_GOLD - 1),
+            new User("d", "디", "p4", Level.SILVER, 60, UserServiceImpl.MIN_RECOMMEND_FOR_GOLD),
+            new User("e", "이", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
+        );
+    }
+
+    @Test
+    void bean() {
+        assertThat(this.userService).isNotNull();
+    }
+
+    @Test
+    void add() {
+        userDao.deleteAll();
+
+        User userWithGoldLevel = users.get(4);
+        User userWithoutLevel = users.get(0);
+        userWithoutLevel.setLevel(null);
+
+        userService.add(userWithGoldLevel);
+        userService.add(userWithoutLevel);
+
+        User userWithGoldLevelRead = userDao.get(userWithGoldLevel.getId());
+        User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
+
+        assertThat(userWithGoldLevelRead.getLevel()).isEqualTo(userWithGoldLevel.getLevel());
+        assertThat(userWithoutLevelRead.getLevel()).isEqualTo(userWithoutLevel.getLevel());
+    }
 
 //	@Test
 //	void upgradeLevels() {
@@ -91,45 +91,45 @@ class UserServiceTest {
 //		checkLevelUpgraded(users.get(3), true);
 //		checkLevelUpgraded(users.get(4), false);
 //	}
-	
-	@DirtiesContext
-	@Test
-	void upgradeLevels() {
-		userDao.deleteAll();
-		for (User user : users) {
-			userDao.add(user);
-		}
-		
-		userService.upgradeLevels();
-		
-		checkLevelUpgraded(users.get(0), false);
-		checkLevelUpgraded(users.get(1), true);
-		checkLevelUpgraded(users.get(2), false);
-		checkLevelUpgraded(users.get(3), true);
-		checkLevelUpgraded(users.get(4), false);
-	}
-	
-	@Test
-	void mockUpgradeLevels() {
-		UserServiceImpl userServiceImpl = new UserServiceImpl();
-		userServiceImpl.setUserLevelUpgradePolicy(new DefaultUserLevelUpgradePolicy());
-		
-		UserDao mockUserDao = Mockito.mock(UserDao.class);
-		Mockito.when(mockUserDao.getAll()).thenReturn(this.users);
-		userServiceImpl.setUserDao(mockUserDao);
-		
-		MailSender mockMailSender = Mockito.mock(MailSender.class);
-		userServiceImpl.setMailSender(mockMailSender);
-		
-		userServiceImpl.upgradeLevels();
-		
-		Mockito.verify(mockUserDao, Mockito.times(2)).update(ArgumentMatchers.any(User.class));
-		Mockito.verify(mockUserDao, Mockito.times(2)).update(ArgumentMatchers.any(User.class));
-		Mockito.verify(mockUserDao).update(users.get(1));
-		assertThat(users.get(1).getLevel()).isEqualTo(Level.SILVER);
-		Mockito.verify(mockUserDao).update(users.get(3));
-		assertThat(users.get(3).getLevel()).isEqualTo(Level.GOLD);
-	}
+
+    @DirtiesContext
+    @Test
+    void upgradeLevels() {
+        userDao.deleteAll();
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        userService.upgradeLevels();
+
+        checkLevelUpgraded(users.get(0), false);
+        checkLevelUpgraded(users.get(1), true);
+        checkLevelUpgraded(users.get(2), false);
+        checkLevelUpgraded(users.get(3), true);
+        checkLevelUpgraded(users.get(4), false);
+    }
+
+    @Test
+    void mockUpgradeLevels() {
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+        userServiceImpl.setUserLevelUpgradePolicy(new DefaultUserLevelUpgradePolicy());
+
+        UserDao mockUserDao = Mockito.mock(UserDao.class);
+        Mockito.when(mockUserDao.getAll()).thenReturn(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
+
+        MailSender mockMailSender = Mockito.mock(MailSender.class);
+        userServiceImpl.setMailSender(mockMailSender);
+
+        userServiceImpl.upgradeLevels();
+
+        Mockito.verify(mockUserDao, Mockito.times(2)).update(ArgumentMatchers.any(User.class));
+        Mockito.verify(mockUserDao, Mockito.times(2)).update(ArgumentMatchers.any(User.class));
+        Mockito.verify(mockUserDao).update(users.get(1));
+        assertThat(users.get(1).getLevel()).isEqualTo(Level.SILVER);
+        Mockito.verify(mockUserDao).update(users.get(3));
+        assertThat(users.get(3).getLevel()).isEqualTo(Level.GOLD);
+    }
 
 //    @Test
 //    void upgradeAllOrNothing() {
@@ -220,73 +220,73 @@ class UserServiceTest {
 //
 //        checkLevelUpgraded(users.get(1), false);
 //    }
-	
-	@DirtiesContext
-	@Test
-	void upgradeAllOrNothing() throws Exception {
-		userDao.deleteAll();
-		for (User user : users) {
-			userDao.add(user);
-		}
-		
-		System.out.println(userService);
-		System.out.println(testUserService);
-		
-		try {
-			this.testUserService.upgradeLevels();
-			Assertions.fail("TestUserServiceException expected");
-		} catch (TestUserServiceException e) {
-		
-		}
-		
-		checkLevelUpgraded(users.get(1), false);
-	}
-	
-	private void checkLevelUpgraded(User user, boolean upgraded) {
-		User userUpdate = userDao.get(user.getId());
-		
-		if (upgraded) {
-			assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel().getNext());
-		} else {
-			assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel());
-		}
-	}
-	
-	@Test
-	void readOnlyTransactionAttribute() {
-		testUserService.getAll();
-		// 실패안되넹 왜징
-	}
-	
-	@Test
-	void advisorAutoProxyCreator() {
-		assertThat(testUserService).isInstanceOf(java.lang.reflect.Proxy.class);
-	}
-	
-	@Test
-	void transactionSync_each() {
-		userService.deleteAll();
-		
-		userService.add(users.get(0));
-		userService.add(users.get(1));
-	}
-	
-	@Test
-	void transactionSync() {
-		userService.deleteAll();
-		assertThat(userDao.getAll().size()).isEqualTo(0);
-		
-		DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+
+    @DirtiesContext
+    @Test
+    void upgradeAllOrNothing() throws Exception {
+        userDao.deleteAll();
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        System.out.println(userService);
+        System.out.println(testUserService);
+
+        try {
+            this.testUserService.upgradeLevels();
+            Assertions.fail("TestUserServiceException expected");
+        } catch (TestUserServiceException e) {
+
+        }
+
+        checkLevelUpgraded(users.get(1), false);
+    }
+
+    private void checkLevelUpgraded(User user, boolean upgraded) {
+        User userUpdate = userDao.get(user.getId());
+
+        if (upgraded) {
+            assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel().getNext());
+        } else {
+            assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel());
+        }
+    }
+
+    @Test
+    void readOnlyTransactionAttribute() {
+        assertThatThrownBy(() -> testUserService.getAll())
+            .isInstanceOf(TransientDataAccessResourceException.class);
+    }
+
+    @Test
+    void advisorAutoProxyCreator() {
+        assertThat(testUserService).isInstanceOf(java.lang.reflect.Proxy.class);
+    }
+
+    @Test
+    void transactionSync_each() {
+        userService.deleteAll();
+
+        userService.add(users.get(0));
+        userService.add(users.get(1));
+    }
+
+    @Test
+    void transactionSync() {
+        userService.deleteAll();
+        assertThat(userDao.getAll().size()).isEqualTo(0);
+
+        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
 //		txDefinition.setReadOnly(true);
-		TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
-		
-		userService.add(users.get(0));
-		userService.add(users.get(1));
-		
+        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+
+        userService.add(users.get(0));
+        userService.add(users.get(1));
+
 //		transactionManager.commit(txStatus);
-		transactionManager.rollback(txStatus);
-		
-		assertThat(userDao.getAll().size()).isEqualTo(0);
-		
-	}
+        transactionManager.rollback(txStatus);
+
+        assertThat(userDao.getAll().size()).isEqualTo(0);
+
+    }
 }
