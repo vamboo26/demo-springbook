@@ -79,7 +79,7 @@
 - ConcurrentHashMap은 데이터 조작 시 전체 데이터에 대해 락을 걸지 않고 조회는 락을 아예 사용하지 않는다
   - 어느 정도 안전하면서 성능이 보장되는 동기화된 HashMap
     
-#### 수정 가능 SQL 레지스트리 테스트clea
+#### 수정 가능 SQL 레지스트리 테스트
 #### 수정 가능 SQL 레지스트리 구현
 
 ### 7.5.2 내장형 데이터베이스를 이용한 SQL 레지스트리 만들기
@@ -107,29 +107,29 @@
 ### 7.6.1 자바 코드를 이용한 빈 설정
 #### 테스트 컨텍스트의 변경
 #### <context:annotation-config \> 제거
-#### <bean>의 전환
+#### \<bean>의 전환
 #### 전용 태그 전환
 
 ### 7.6.2 빈 스캐닝과 자동 와이어링
-#### `@Autowired`를 이용한 자동와이어링
-#### `@Component`를 이용한 자동 빈 등록
+#### @Autowired를 이용한 자동와이어링
+#### @Component를 이용한 자동 빈 등록
 
-### 7.6.3 컨텍스트 분리와 `@Import`
+### 7.6.3 컨텍스트 분리와 @Import
 #### 테스트용 컨텍스트 분리
-#### `@Import`
+#### @Import
 
 ### 7.6.4 프로파일
-#### `@Profile`과 `@ActiveProfiles`
+#### @Profile과 @ActiveProfiles
 #### 컨테이너의 빈 등록 정보 확인
 #### 중첩 클래스를 이용한 프로파일 적용
 
 ### 7.6.5 프로퍼티 소스
-#### `@PropertySource`
-#### `PropertySourcesPlaceholderConfigurer`
+#### @PropertySource
+#### PropertySourcesPlaceholderConfigurer
 
-### 7.6.6 빈 설정의 재사용과 `@Enable*`
+### 7.6.6 빈 설정의 재사용과 @Enable*
 #### 빈 설정자
-#### `@Enable*` 애노테이션
+#### @Enable* 애노테이션
 
 
 
