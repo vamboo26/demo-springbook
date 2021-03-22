@@ -1,5 +1,6 @@
 package io.zingoworks.demospringbook.user.dao;
 
+import io.zingoworks.demospringbook.sql.SqlService;
 import io.zingoworks.demospringbook.user.domain.Level;
 import io.zingoworks.demospringbook.user.domain.User;
 import lombok.Setter;
@@ -16,7 +17,13 @@ public class UserDaoJdbc implements UserDao {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+
+	private SqlService sqlService;
+
+	public void setSqlService(SqlService sqlService) {
+		this.sqlService = sqlService;
+	}
+
 	private RowMapper<User> userMapper = (resultSet, i) -> {
 		User user = new User();
 		user.setId(resultSet.getString("id"));
@@ -30,7 +37,11 @@ public class UserDaoJdbc implements UserDao {
 	
 	@Override
 	public void add(User user) {
-		this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)", user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLoginSequence(), user.getRecommendationCount());
+		this.jdbcTemplate.update(
+			this.sqlService.getSql("userAdd"),
+			user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLoginSequence(), user.getRecommendationCount()
+		);
+//		this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)", user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLoginSequence(), user.getRecommendationCount());
 	}
 	
 	@Override
